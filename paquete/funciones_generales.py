@@ -62,30 +62,32 @@ def crear_matriz(filas:int,columnas:int,valor_inicial:any)->list:
         matriz += [fila]
     return matriz
 
-def cargar_matriz_desordenada(matriz_vacia:list,matriz_ordenada_origen:list,cantidad_elementos:int)->list:
-    for _ in range(cantidad_elementos):
-        fila_agregar = random.randint(0,3)
-        columna_agregar = random.randint(2,5)
-        elemento_agregar = matriz_ordenada_origen[fila_agregar][columna_agregar],matriz_ordenada_origen[fila_agregar][1]
-        while verificar_elemento_matriz(matriz_vacia,elemento_agregar):
-            fila_agregar = random.randint(0,3)
-            columna_agregar = random.randint(2,5)
-            elemento_agregar = matriz_ordenada_origen[fila_agregar][columna_agregar],matriz_ordenada_origen[fila_agregar][1]
+def encontrar_posicion_disponible_matriz(matriz:list,cant_filas:int,cant_columnas:int) -> tuple:
+    while True:
+        fila = random.randint(0, cant_filas-1)
+        columna = random.randint(0, cant_columnas-1)
+        if matriz[fila][columna] == None:
+            return fila, columna
 
-        fila_agregar_desorden = random.randint(0,3)
-        columna_agregar_desorden = random.randint(0,3)
-        while matriz_vacia[fila_agregar_desorden][columna_agregar_desorden] != None:
-            fila_agregar_desorden = random.randint(0,3)
-            columna_agregar_desorden = random.randint(0,3)
-        matriz_vacia[fila_agregar_desorden][columna_agregar_desorden] = elemento_agregar 
-    return matriz_vacia
+def obtener_elemento_no_repetido(matriz_cargada:list, matriz_a_cargar:list)->tuple:
+     while True:
+        fila = random.randint(0, 3)
+        columna = random.randint(2, 5)
+        elemento = matriz_cargada[fila][columna], matriz_cargada[fila][1]
+        if verificar_elemento_matriz(matriz_a_cargar, elemento) == False:
+            return elemento
+
+def cargar_matriz_desordenada(matriz_a_cargar:list,matriz_ordenada_origen:list,cantidad_elementos:int,cant_filas:int,cant_columnas:int)->list:
+    for _ in range(cantidad_elementos):
+        elemento_agregar = obtener_elemento_no_repetido(matriz_ordenada_origen,matriz_a_cargar)
+        fila,columna = encontrar_posicion_disponible_matriz(matriz_a_cargar,cant_filas,cant_columnas)
+        matriz_a_cargar[fila][columna] = elemento_agregar
+    return matriz_a_cargar
 
 def crear_matriz_4x4_desordenada(matriz_secuencias_ordenadas:list)->list:
     matriz_desordenada = crear_matriz(4,4,None)
-    matriz_desordenada = cargar_matriz_desordenada(matriz_desordenada,matriz_secuencias_ordenadas,16)
+    matriz_desordenada = cargar_matriz_desordenada(matriz_desordenada,matriz_secuencias_ordenadas,16,4,4)
     return matriz_desordenada
-
-
 
 matriz = crear_matriz_secuencias("secuencias.csv","2",4)
 for fila in matriz:
