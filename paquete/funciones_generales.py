@@ -62,31 +62,33 @@ def crear_matriz(filas:int,columnas:int,valor_inicial:any)->list:
         matriz += [fila]
     return matriz
 
-def crear_matriz_4x4_desordenada(matriz_secuencias_ordenadas:list)->list:
-    matriz_desordenada = crear_matriz(4,4,None)
-    for _ in range(16):
+def cargar_matriz_desordenada(matriz_vacia:list,matriz_ordenada_origen:list,cantidad_elementos:int)->list:
+    for _ in range(cantidad_elementos):
         fila_agregar = random.randint(0,3)
         columna_agregar = random.randint(2,5)
-        elemento_agregar = matriz_secuencias_ordenadas[fila_agregar][columna_agregar],matriz_secuencias_ordenadas[fila_agregar][1]
-        while verificar_elemento_matriz(matriz_desordenada,elemento_agregar):
+        elemento_agregar = matriz_ordenada_origen[fila_agregar][columna_agregar],matriz_ordenada_origen[fila_agregar][1]
+        while verificar_elemento_matriz(matriz_vacia,elemento_agregar):
             fila_agregar = random.randint(0,3)
             columna_agregar = random.randint(2,5)
-            elemento_agregar = matriz_secuencias_ordenadas[fila_agregar][columna_agregar],matriz_secuencias_ordenadas[fila_agregar][1]
+            elemento_agregar = matriz_ordenada_origen[fila_agregar][columna_agregar],matriz_ordenada_origen[fila_agregar][1]
 
         fila_agregar_desorden = random.randint(0,3)
         columna_agregar_desorden = random.randint(0,3)
-        while matriz_desordenada[fila_agregar_desorden][columna_agregar_desorden] != None:
+        while matriz_vacia[fila_agregar_desorden][columna_agregar_desorden] != None:
             fila_agregar_desorden = random.randint(0,3)
             columna_agregar_desorden = random.randint(0,3)
-        matriz_desordenada[fila_agregar_desorden][columna_agregar_desorden] = elemento_agregar 
+        matriz_vacia[fila_agregar_desorden][columna_agregar_desorden] = elemento_agregar 
+    return matriz_vacia
+
+def crear_matriz_4x4_desordenada(matriz_secuencias_ordenadas:list)->list:
+    matriz_desordenada = crear_matriz(4,4,None)
+    matriz_desordenada = cargar_matriz_desordenada(matriz_desordenada,matriz_secuencias_ordenadas,16)
     return matriz_desordenada
 
 
 
 matriz = crear_matriz_secuencias("secuencias.csv","2",4)
 for fila in matriz:
-    print(fila)
-
     for i in range(0,len(matriz)):
         for j in range(0,len(matriz[0])):
             print(matriz[i][j], end="\t")
