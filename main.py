@@ -59,34 +59,3 @@ def jugar_agrupados()->None:
 
 
 jugar_agrupados()
-# matriz = crear_matriz_secuencias("secuencias.csv",4)
-# print(matriz)
-# matriz_desordenada = crear_matriz_4x4_desordenada(matriz)
-# print(matriz_desordenada)
-
-# matriz = borrar_secuencias_usadas(matriz,matriz_desordenada)
-# print(matriz)
-
-# matriz_desordenada = crear_matriz_4x4_desordenada(matriz)
-# print(matriz_desordenada)
-
-
-# [1] Pizza               [2] Hamburguesa         [3] Sándwich            [4] Taco
-# [5] Microondas          [6] Tostadora           [7] Nevera              [8] Lavadora
-# [9] Natación            [10] Baloncesto         [11] Tenis              [12] Fútbol
-# [13] Acción             [14] Comedia            [15] Terror             [16] Drama
-
-# [1] Apple               [2] Samsung             [3] HP                  [4] Dell
-# [5] Hidrógeno           [6] Oro                 [7] Plata               [8] Oxígeno
-# [9] Pino                [10] Roble              [11] Secuoya            [12] Abeto
-# [13] Samus              [14] Mario              [15] Link               [16] Sonic
-
-# [1] Sudáfrica           [2] Nigeria             [3] Egipto              [4] Argelia
-# [5] Marte               [6] Júpiter             [7] Mercurio            [8] Venus
-# [9] Matemáticas         [10] Lengua             [11] Historia           [12] Geografía
-# # [13] PortAventura       [14] Six Flags          [15] Disneyland         [16] Universal Studios
-
-# [1] Torre Eiffel        [2] Gran Muralla        [3] Coliseo             [4] Cabildo
-# [5] Hígado              [6] Cerebro             [7] Pulmón              [8] Corazón
-# [9] Barco               [10] Tren               [11] Helicóptero        [12] Submarino
-# [13] Hermana            [14] Padre              [15] Hermano            [16] Madre
