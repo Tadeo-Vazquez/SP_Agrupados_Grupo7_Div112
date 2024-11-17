@@ -1,5 +1,6 @@
 from paquete.funciones_especificas import *
 from paquete.funciones_input import *
+import copy
 
 def crear_matriz_secuencias(path:str,cantidad_secuencias:int)->list:
     secuencias = convertir_csv_lista(path)
@@ -72,7 +73,24 @@ def imprimir_interfaz_matriz(matriz:list, espacios_ocupados:int, resueltas:list 
 
 def reordenar_acierto_matriz(matriz:list,aciertos_previos:int,categoría_acertada:str)->list:
     elementos_ordenados = 0
-    
+    for fila in matriz:
+        for columna in fila:
+            if columna[1] == categoría_acertada:
+                aux = matriz[aciertos_previos][elementos_ordenados]
+                matriz[aciertos_previos][elementos_ordenados] = columna
+                columna = aux
+
+                elementos_ordenados += 1
+    return matriz
+
+# [0,1,2,3]
+# [4,5,6,7]
+# var = 0
+# 0 = columna
+# columna = var
+
+# 0,7 = 7,0
+
 
 
 
