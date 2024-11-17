@@ -2,8 +2,8 @@ from paquete.funciones_especificas import *
 from paquete.funciones_input import *
 import copy
 
-def crear_matriz_secuencias(path:str,cantidad_secuencias:int)->list:
-    secuencias = convertir_csv_lista(path)
+def crear_matriz_secuencias(secuencias,cantidad_secuencias:int)->list:
+    # secuencias = convertir_csv_lista(path)
     matriz_secuencias_ordenadas = cargar_matriz_ordenada(secuencias,cantidad_secuencias)
     return matriz_secuencias_ordenadas
 
@@ -70,26 +70,26 @@ def imprimir_interfaz_matriz(matriz:list, espacios_ocupados:int, resueltas:list 
             print(f"\033[1;36m[{numerador}]\033[0m {columna[0]:{espacios_ocupados}}", end = "\t")
             numerador += 1
         print()
-
+        
 def reordenar_acierto_matriz(matriz:list,aciertos_previos:int,categoría_acertada:str)->list:
     elementos_ordenados = 0
-    for fila in matriz:
-        for columna in fila:
-            if columna[1] == categoría_acertada:
+    for i in range(len(matriz)):
+        for j in range(len(matriz[0])):
+            if matriz[i][j][1] == categoría_acertada:
                 aux = matriz[aciertos_previos][elementos_ordenados]
-                matriz[aciertos_previos][elementos_ordenados] = columna
-                columna = aux
-
+                matriz[aciertos_previos][elementos_ordenados] = matriz[i][j]
+                matriz[i][j] = aux
                 elementos_ordenados += 1
     return matriz
 
-# [0,1,2,3]
-# [4,5,6,7]
-# var = 0
-# 0 = columna
-# columna = var
+def borrar_secuencias_usadas(lista_secuencias:list,secuencias_usadas:list)->list:
+    for secuencia in lista_secuencias:
+        for secuencia_usada in secuencias_usadas:
+            if secuencia[0] == secuencia_usada[0][1]:
+                lista_secuencias.remove(secuencia)
+    return lista_secuencias
 
-# 0,7 = 7,0
+
 
 
 
