@@ -1,6 +1,6 @@
 import re
 import random
-
+import json
 def verificar_append_lista(lista:list,elemento)->bool:
     """verifica si un elemento esta cargado dentro de una lista
     Args:
@@ -9,13 +9,11 @@ def verificar_append_lista(lista:list,elemento)->bool:
     Returns:
         bool: True si el elemento ya está en la lista y False si el elemento no está en la lista
     """
-    resultado = None
+    resultado = False
     for elem in lista:
         if elemento == elem:
             resultado = True
             break
-        else:
-            resultado = False
     return resultado
 
 def verificar_elemento_matriz(matriz:list,elemento:any)->bool:
@@ -97,3 +95,22 @@ def crear_matriz(filas:int,columnas:int,valor_inicial:any=None)->list:
         fila = [valor_inicial] * columnas
         matriz += [fila]
     return matriz
+
+def obtener_elemento_segun_posicion(posicion:int, matriz_juego:list)->tuple:
+    contador = 1
+    for fila in matriz_juego:
+        for columna in fila:
+            if contador == posicion:
+                elemento = columna
+            contador += 1
+    return elemento
+
+
+def guardar_stats_json(nombre_user:str,puntaje_total:int,nivel_alcanzado:int,tiempo:float,path:str)->None:
+    usuario = {}
+    usuario["Nombre Usuario"] = nombre_user
+    usuario["Puntaje"] = puntaje_total
+    usuario["Nivel Alcanzado"] = nivel_alcanzado
+    usuario["Tiempo Promedio por Nivel"] = tiempo
+    with open(path,"w") as archivo:
+        json.dump(usuario,archivo,indent=4)
