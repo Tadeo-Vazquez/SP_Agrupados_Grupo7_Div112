@@ -20,11 +20,6 @@ def cargar_matriz_ordenada(secuencias:list,cantidad_secuencias:int)->list:
         matriz_secuencias_ordenadas.append(secuencia_agregar)
     return matriz_secuencias_ordenadas
 
-def crear_matriz_secuencias(secuencias,cantidad_secuencias:int)->list:
-    # secuencias = convertir_csv_lista(path)
-    matriz_secuencias_ordenadas = cargar_matriz_ordenada(secuencias,cantidad_secuencias)
-    return matriz_secuencias_ordenadas
-
 def cargar_matriz_desordenada(matriz_a_cargar:list,matriz_ordenada_origen:list,cantidad_elementos:int,cant_filas:int,cant_columnas:int)->list:
     for _ in range(cantidad_elementos):
         elemento_agregar = obtener_elemento_no_repetido(matriz_ordenada_origen,matriz_a_cargar)
@@ -43,16 +38,15 @@ def averiguar_4categorias_ingresadas(matriz_juego:int,numeros_ingresados:list)->
     for i in range(len(matriz_juego)):
         for j in range(len(matriz_juego[0])):
             contador += 1
-            for numero in numeros_ingresados:
-                if contador == numero:   
-                    lista_categorias_ingresadas.append(matriz_juego[i][j][1])
+            if verificar_append_lista(numeros_ingresados,contador):
+                lista_categorias_ingresadas.append(matriz_juego[i][j][1])
     return lista_categorias_ingresadas
 
 def averiguar_coincidencia_4cat(categorias_ingresadas:list)->bool:
+    set_categorias_ingresadas = set(categorias_ingresadas)
     coincidencia = True
-    for i in range(1,len(categorias_ingresadas)):
-        if categorias_ingresadas[i] != categorias_ingresadas[i-1]:
-            coincidencia = False
+    if len(set_categorias_ingresadas) > 1:
+        coincidencia = False
     return coincidencia
     
 def pedir_4_posiciones(minimo:int,maximo:int)->list:
@@ -68,21 +62,6 @@ def pedir_4_posiciones(minimo:int,maximo:int)->list:
             break
         lista_posiciones_int.append(posicion)
     return lista_posiciones_int
-
-matriz = crear_matriz_secuencias("secuencias.csv",4)
-# for fila in matriz:
-#     for i in range(0,len(matriz)):
-#         for j in range(0,len(matriz[0])):
-#             print(matriz[i][j], end="\t")
-#         print()
-
-def mostrar_stats(nivel:int,vidas_nivel:int,reinicios:int,score:int,espacios)->None:
-    print(f"\033[91mNivel: {nivel:<{espacios}}Vidas: {vidas_nivel:<{espacios}}Reinicios: {reinicios:<{espacios}}Puntaje: {score:<{espacios}} \033[0m")
-
-def mostrar_comodines()->None:
-    print(f"\033[95m[17]\033[0m Comodín: Mostrar 1 categoría", end = " ")
-    print(f"\033[95m[18]\033[0m Comodín: Emparejar 2 Elementos", end = " ")
-    print(f"\033[95m[19]\033[0m Comodín: Mostrar 4 categorias 3seg")
 
 def imprimir_interfaz_matriz(matriz:list,espacios:int,score:int,vidas_nivel:int,reinicios:int,aciertos:int,nivel:int):
     numerador = 1
@@ -160,7 +139,7 @@ def comodin_mostrar_elementos_1fila(matriz_juego:list,cant_segundos:int, acierto
 def reasignacion_matriz_juego(matriz_usada:list,lista_secuencias:list)->tuple:
     categorias_usadas = extraer_4_categorias_usadas(matriz_usada)
     secuencias = borrar_4_categorias_lista(categorias_usadas,lista_secuencias)
-    matriz = crear_matriz_secuencias(secuencias,4)
+    matriz = cargar_matriz_ordenada(secuencias,4)
     matriz_desordenada = crear_matriz_4x4_desordenada(matriz)
     return secuencias,matriz,matriz_desordenada
 
@@ -185,8 +164,3 @@ def ejecutar_comodin(comodin:int,matriz_juego:list,aciertos:int,comodines:list):
             else:
                 print("Comodín ya usado")
     return comodines
-
-
-
-
-

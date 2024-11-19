@@ -114,3 +114,30 @@ def guardar_stats_json(nombre_user:str,puntaje_total:int,nivel_alcanzado:int,tie
     usuario["Tiempo Promedio por Nivel"] = tiempo
     with open(path,"w") as archivo:
         json.dump(usuario,archivo,indent=4)
+
+def mostrar_stats(nivel:int,vidas_nivel:int,reinicios:int,score:int,espacios)->None:
+    print(f"\033[91mNivel: {nivel:<{espacios}}Vidas: {vidas_nivel:<{espacios}}Reinicios: {reinicios:<{espacios}}Puntaje: {score:<{espacios}} \033[0m")
+
+def mostrar_comodines()->None:
+    print(f"\033[95m[17]\033[0m Comodín: Mostrar 1 categoría", end = " ")
+    print(f"\033[95m[18]\033[0m Comodín: Emparejar 2 Elementos", end = " ")
+    print(f"\033[95m[19]\033[0m Comodín: Mostrar 4 categorias 3seg")
+
+def reasignacion_stats(acierto:bool,vidas_nivel:int,nivel:int,score:int,aciertos:int,reinicios:int)->tuple: #sin usar: acortar codigo main
+    if acierto and aciertos < 4:
+        aciertos += 1
+        score += 16
+    elif acierto:
+        vidas_nivel = 3
+        nivel += 1
+        score += 20
+        aciertos = 0
+    elif vidas_nivel > 0:
+        vidas_nivel -= 1
+        score -= 8
+    else:
+        vidas_nivel = 3
+        reinicios -= 1
+        aciertos = 0 
+    return nivel,aciertos,score,vidas_nivel,reinicios
+    
