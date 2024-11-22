@@ -12,18 +12,14 @@ def convertir_csv_a_lista(path:str)->list:
             lista_secuencias.append(secuencia)
     return lista_secuencias
 
-def seleccionar_x_elementos_random_de_una_lista(lista_de_elementos:list, cantidad:int, modificar_lista: bool = False)->list:
-    if not modificar_lista:
-        lista_de_elementos = list(lista_de_elementos)
+def seleccionar_x_elementos_random_de_una_lista(lista_de_elementos:list, cantidad:int)->list:
     lista_random = []
     for _ in range(cantidad):
         elemento_random = random.randint(0, len(lista_de_elementos) - 1)
         lista_random.append(lista_de_elementos.pop(elemento_random))
     return lista_random
 
-def desempaquetar_listas_a_tuplas(lista_de_listas:list, modificar_lista: bool = False)->list:
-    if not modificar_lista:
-        lista_de_listas = copy.deepcopy(lista_de_listas)
+def desempaquetar_listas_a_tuplas(lista_de_listas:list)->list:
     lista_de_tuplas = []
     for lista in lista_de_listas:
         categoria = lista.pop(0)
@@ -133,5 +129,3 @@ def falso_in(elemento_a_buscar:any, lugar_donde_buscar:any)->bool:
         if elemento_a_buscar == elemento:
             return True
     return False
-
-

@@ -1,69 +1,134 @@
 from paquete.funciones_generales import *
+from paquete.funciones_pygame import *
 from os import system
+import pygame
 
 def jugar_agrupados()->None:
-    comodines = [17,18,19]
-    inicio_juego = time.time()
-    nombre_user = pedir_nombre_user(3,20)
-    secuencias = convertir_csv_lista("secuencias.csv")
-    matriz = cargar_matriz_ordenada(secuencias,4)
-    matriz_desordenada = crear_matriz_4x4_desordenada(matriz)
-    puntaje = 0
-    vidas_nivel = 3
-    reinicios = 3
-    aciertos = 0
-    nivel = 1
-    while True:
-        imprimir_interfaz_matriz(matriz_desordenada,18,puntaje,vidas_nivel,reinicios,aciertos,nivel)
-        lista_posiciones = pedir_4_posiciones(aciertos*4+1,19)
-        
-        if lista_posiciones[0] > 16:
-            comodines = ejecutar_comodin(lista_posiciones[0],matriz_desordenada,aciertos,comodines)
-            system("pause")
-            system("cls")
-            continue
+    valores_juego = inicializar_juego()
+    matriz_desordenada,secuencias,matriz = valores_juego["matriz_desordenada"], valores_juego["secuencias"], valores_juego["matriz"]
+    while valores_juego["flag_juego"]:
+        imprimir_interfaz_matriz(matriz_desordenada,18,valores_juego["stats"])
 
+        lista_posiciones = pedir_4_posiciones(valores_juego["stats"]["aciertos"]*4+1,19)
+        if verificar_ingreso_comodin(lista_posiciones[0],matriz_desordenada,valores_juego["stats"],valores_juego["comodines"]): #si ejecuta el comodin devuelve true
+            continue
         lista_cat_ingresadas = averiguar_4categorias_ingresadas(matriz_desordenada,lista_posiciones)
         acierto = averiguar_coincidencia_4cat(lista_cat_ingresadas)
+
         if acierto:
-            categoria_acertada = lista_cat_ingresadas[0]
-            matriz_desordenada = reordenar_acierto_matriz(matriz_desordenada,aciertos,categoria_acertada)
-            aciertos += 1
-            puntaje += 16
-            print(GREEN_TEXTO + "Acertaste un grupo!" + RESET)
-            if aciertos == 4:
-                if nivel == 5:
-                    fin_juego = time.time()
-                    print("Has ganado el juego")
-                    break
-                vidas_nivel = 3
-                nivel += 1
-                puntaje += 20
-                aciertos = 0
-                secuencias,matriz,matriz_desordenada = reasignacion_matriz_juego(matriz_desordenada,secuencias)
-                print(f"Ganaste. Pasaste al nivel {nivel}")
+            matriz_desordenada = reordenar_acierto_matriz(matriz_desordenada,valores_juego["stats"]["aciertos"],lista_cat_ingresadas[0])
+            valor_acierto = manejar_aciertos(valores_juego["stats"])
+            if valor_acierto == 1:
+                secuencias,matriz,matriz_desordenada = reasignacion_matriz_juego(matriz_desordenada,secuencias,matriz)
+            elif valor_acierto == 2:
+                fin_juego = time.time()
+                break
         else:
-            vidas_nivel -= 1
-            puntaje -= 8
-            if vidas_nivel == 0:
-                print("Perdiste el nivel")
-                if reinicios == 0:
-                    print("Perdiste el juego")
-                    fin_juego = time.time()
-                    break
-                vidas_nivel = 3
-                reinicios -= 1
-                aciertos = 0
-                puntaje -= 16
-                secuencias,matriz,matriz_desordenada = reasignacion_matriz_juego(matriz_desordenada,secuencias)
-            else:
-                print(f"{RED_TEXTO}Perdiste una vida. Te quedan {vidas_nivel}{RESET}")
+            valor_error = manejar_errores(valores_juego["stats"])
+            if valor_error == 2:
+                fin_juego = time.time()
+                valores_juego["flag_juego"] = False
+            elif valor_error == 1:
+                secuencias,matriz,matriz_desordenada = reasignacion_matriz_juego(matriz_desordenada,secuencias,matriz)
             
         system("pause")
         system("cls")
-    promedio_tiempo_nivel = round((fin_juego - inicio_juego) / nivel)
-    guardar_stats_json(nombre_user,puntaje,nivel,promedio_tiempo_nivel,"StatsUser.json")
+    promedio_tiempo_nivel = round((fin_juego - valores_juego["inicio_juego"]) / valores_juego["stats"]["nivel"])
+    guardar_stats_json(valores_juego["stats"],promedio_tiempo_nivel,"StatsUser.json")
 
 jugar_agrupados()
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# PANTALLA = 1000,800
+# flag_juego = True
+# pygame.init()
+
+# ventana_principal = pygame.display.set_mode(PANTALLA)
+# pygame.display.set_caption("Juego prueba")
+
+# boton_eifel = crear_boton(pantalla= ventana_principal,
+#                     posicion= (40,40),
+#                     dimension= (50,50),
+#                     path_imagen="imagenes/eiffel.png")
+
+# boton_cabildo = crear_boton(pantalla=ventana_principal,
+#                             posicion= (200,40),
+#                             dimension= (50,50),
+#                             path_imagen="imagenes/cabildo.png")
+
+# boton_texto = crear_boton(pantalla=ventana_principal,
+#                             posicion= (500,500),
+#                             dimension= (50,50),
+#                             texto="Good job",
+#                             fuente={"Fuente":"arial",
+#                                     "Tamaño": 20,
+#                                     "Color": "Red",
+#                                     "Color fondo": "White"})
+
+# fuente = pygame.font.SysFont("arial",20)
+# texto = fuente.render("Ualala señor frances", False, "Blue", "White")
+
+# fondo = pygame.image.load("imagenes/fondo.jpeg").convert()
+# fondo = pygame.transform.scale(fondo, PANTALLA)
+
+
+# while flag_juego:
+#     for evento in pygame.event.get():
+#         if evento.type == pygame.QUIT:
+#             flag_juego = False
+#         elif evento.type == pygame.MOUSEBUTTONDOWN:
+#             if boton_eifel["Rectangulo"].collidepoint(evento.pos):
+#                 boton_eifel["Estado"] = True
+#             elif boton_cabildo["Rectangulo"].collidepoint(evento.pos):
+#                 boton_cabildo["Estado"] = True
+#             elif boton_texto["Rectangulo"].collidepoint(evento.pos):
+#                 reproducir_sonido("imagenes/correcto.mp3")
+
+#     ventana_principal.blit(fondo, (0,0))  # Fondo de la pantalla
+#     dibujar(boton_eifel)
+#     dibujar(boton_cabildo)
+#     dibujar(boton_texto)
+#     if boton_eifel["Estado"]:
+#         # ventana_principal.blit(texto, (300,500))
+#         boton_eifel["Color Fondo"] = "Green"
+#     if boton_cabildo["Estado"]:
+#         boton_cabildo["Color Fondo"] = "Green"
+
+#     imagen_rect = boton_eifel["Superficie"].get_rect(center=boton_eifel["Rectangulo"].center)
+#     pygame.draw.rect(ventana_principal, boton_eifel["Color Fondo"], boton_eifel["Rectangulo"])  # Fondo del botón
+#     pygame.draw.rect(ventana_principal, boton_cabildo["Color Fondo"], boton_cabildo["Rectangulo"])  # Fondo del botón
+#     pygame.draw.rect(ventana_principal, "Blue", boton_texto["Rectangulo"], 2)  # Fondo del botón
+
+#     ventana_principal.blit(boton_eifel["Superficie"], boton_eifel["Rectangulo"])  # Imagen del botón
+#     ventana_principal.blit(boton_cabildo["Superficie"], boton_cabildo["Rectangulo"])
+#     pygame.display.update()
+    

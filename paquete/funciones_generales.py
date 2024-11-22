@@ -11,6 +11,7 @@ MAGENTA_TEXTO = '\033[95m'
 CYAN_TEXTO = '\033[96m'
 RESET = '\033[0m'
 
+
 def cargar_matriz_ordenada(secuencias:list,cantidad_secuencias:int)->list:
     matriz_secuencias_ordenadas = []
     for _ in range(cantidad_secuencias):
@@ -63,8 +64,9 @@ def pedir_4_posiciones(minimo:int,maximo:int)->list:
         lista_posiciones_int.append(posicion)
     return lista_posiciones_int
 
-def imprimir_interfaz_matriz(matriz:list,espacios:int,score:int,vidas_nivel:int,reinicios:int,aciertos:int,nivel:int):
+def imprimir_interfaz_matriz(matriz:list,espacios:int,stats:dict):
     numerador = 1
+    aciertos = stats["aciertos"]
     for fila in matriz:
         for columna in fila:
             if aciertos > 0:
@@ -75,7 +77,8 @@ def imprimir_interfaz_matriz(matriz:list,espacios:int,score:int,vidas_nivel:int,
         aciertos -= 1
         print()
     mostrar_comodines()
-    mostrar_stats(nivel,vidas_nivel,reinicios,score,espacios)
+    mostrar_stats(stats,espacios)
+
 
 def reordenar_acierto_matriz(matriz:list,aciertos_previos:int,categoría_acertada:str)->list:
     elementos_ordenados = 0
@@ -136,31 +139,93 @@ def comodin_mostrar_elementos_1fila(matriz_juego:list,cant_segundos:int, acierto
     time.sleep(cant_segundos)
     system("cls")
 
-def reasignacion_matriz_juego(matriz_usada:list,lista_secuencias:list)->tuple:
+def reasignacion_matriz_juego(matriz_usada:list,lista_secuencias:list,matriz_ordenada:list)->tuple:
     categorias_usadas = extraer_4_categorias_usadas(matriz_usada)
     secuencias = borrar_4_categorias_lista(categorias_usadas,lista_secuencias)
-    matriz = cargar_matriz_ordenada(secuencias,4)
-    matriz_desordenada = crear_matriz_4x4_desordenada(matriz)
-    return secuencias,matriz,matriz_desordenada
+    matriz_ordenada = cargar_matriz_ordenada(secuencias,4)
+    matriz_desordenada = crear_matriz_4x4_desordenada(matriz_ordenada)
+    return secuencias,matriz_ordenada,matriz_desordenada
 
-def ejecutar_comodin(comodin:int,matriz_juego:list,aciertos:int,comodines:list):
+def ejecutar_comodin(comodin:int,matriz_juego:list,stats:dict,comodines:list):
     match comodin:
         case 17:
             if verificar_append_lista(comodines,17):
-                comodin_mostrar_categoria(matriz_juego,aciertos)
+                comodin_mostrar_categoria(matriz_juego,stats["aciertos"])
                 comodines.remove(17)
             else:
                 print("Comodín ya usado")
         case 18:
             if verificar_append_lista(comodines,18):
-                comodin_emparejar_dos(matriz_juego,aciertos)
+                comodin_emparejar_dos(matriz_juego,stats["aciertos"])
                 comodines.remove(18)
             else:
                 print("Comodín ya usado")
         case 19:
             if verificar_append_lista(comodines,19):
-                comodin_mostrar_elementos_1fila(matriz_juego,3,aciertos)
+                comodin_mostrar_elementos_1fila(matriz_juego,3,stats["aciertos"])
                 comodines.remove(19)
             else:
                 print("Comodín ya usado")
     return comodines
+
+def paso_nivel(stats:dict):
+    resultado = False
+    if stats["aciertos"] == 4:
+        resultado = True
+    return resultado
+
+def verificar_ingreso_comodin(posicion:int,matriz_desordenada,stats,comodines):
+    resultado = False
+    if posicion > 16:
+        comodines = ejecutar_comodin(posicion,matriz_desordenada,stats,comodines)
+        system("pause")
+        system("cls")
+        resultado = True
+    return resultado
+
+def manejar_aciertos(stats):
+    reasignacion_stats(True,stats)
+    print(GREEN_TEXTO + "Acertaste un grupo!" + RESET)
+    resultado = 0
+    if paso_nivel(stats):
+        resultado = 1
+        if stats["nivel"] == 5:
+            print("Has ganado el juego")
+            resultado = 2
+        reasignacion_stats(True,stats)
+        print(f"Ganaste. Pasaste al nivel {stats['nivel']}")
+    return resultado
+
+def manejar_errores(stats):
+    resultado = 0
+    reasignacion_stats(False,stats)
+    if stats["vidas nivel"] == 0:
+        print("Perdiste el nivel")
+        resultado = 1
+        if stats["reinicios"] == 0:
+            print("Perdiste el juego")
+            resultado = 2
+        reasignacion_stats(False,stats)
+    else:
+        print(f"{RED_TEXTO}Perdiste una vida. Te quedan {stats["vidas nivel"]}{RESET}")
+    return resultado
+
+def inicializar_juego() -> dict:
+    flag_juego = True
+    comodines = [17, 18, 19]
+    inicio_juego = time.time()
+    nombre_user = pedir_nombre_user(3, 20)
+    secuencias = convertir_csv_lista("secuencias.csv")
+    matriz = cargar_matriz_ordenada(secuencias, 4)
+    matriz_desordenada = crear_matriz_4x4_desordenada(matriz)
+    stats = crear_dict_stats(nombre_user)
+    return {
+        "flag_juego": flag_juego,
+        "comodines": comodines,
+        "inicio_juego": inicio_juego,
+        "nombre_user": nombre_user,
+        "secuencias": secuencias,
+        "matriz": matriz,
+        "matriz_desordenada": matriz_desordenada,
+        "stats": stats
+    }
