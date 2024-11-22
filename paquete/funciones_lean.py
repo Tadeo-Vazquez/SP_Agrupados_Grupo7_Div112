@@ -35,69 +35,6 @@ def armar_matriz_inicial_juego(lista_de_tuplas:list, dimensiones_matriz)->list:
         matriz_juego.append(fila)
     return matriz_juego
 
-def mostrar_matriz(matriz):
-    for fila in matriz:
-        for columna in fila:
-            print(columna, end = "\t")
-        print()
-
-def agregar_posiciones_de_matriz_a_diccionario(dimensiones_matriz:tuple, diccionario:dict):
-    string_matriz = f"{dimensiones_matriz[0]}X{dimensiones_matriz[1]}"
-    diccionario["Estructura"][string_matriz] = {}
-    contador_posicion = 1
-    for fila in range(dimensiones_matriz[0]):
-        for columna in range(dimensiones_matriz[1]):
-            diccionario["Estructura"][string_matriz][str(contador_posicion)] = (fila, columna)
-            contador_posicion += 1
-
-def verificador_de_categorias(lista_de_tuplas:list)->bool:
-    for tupla in lista_de_tuplas:
-        if lista_de_tuplas[0][0] != tupla[0]:
-            return False
-    return True
-
-def seleccionar_palabra_de_matriz(matriz:list, diccionario:dict, numero:str)->any:
-    coordenadas = diccionario[numero]
-    elemento = matriz[coordenadas[0]][coordenadas[1]]
-    return elemento
-
-def verificar_input_principal(cadena_ingresada:str, elementos_a_seleccionar:dict, elementos_ya_seleccionados:list, especiales:list, completados:int)->bool:
-    if falso_in(cadena_ingresada, especiales):
-        return True
-    if falso_in(cadena_ingresada, elementos_a_seleccionar) and falso_in(cadena_ingresada, elementos_ya_seleccionados) == False:
-        if int(cadena_ingresada) > completados:
-            return True
-    return False
-
-def desempaquetar_matriz_a_set(matriz:list)->set:
-    set_final = set()
-    for fila in matriz:
-        for columna in fila:
-            set_final.add(columna)
-    return set_final
-
-def seleccionar_elementos_no_coincidentes_entre_matrices(matriz_1:list, matriz_2:list)->list:
-    set_matriz_1 = desempaquetar_matriz_a_set(matriz_1)
-    set_matriz_2 = desempaquetar_matriz_a_set(matriz_2)
-    elementos_no_coincidentes = set_matriz_1.union(set_matriz_2)
-    return list(elementos_no_coincidentes)
-
-
-def armar_matriz_con_filas_correctas(matriz:list, elementos_a_agregar:list, filas_correctas:int, dimensiones:tuple):
-    matriz_resultante = []
-    if filas_correctas == 0:
-        matriz_resultante.append(elementos_a_agregar)
-    else:
-        for i in range(filas_correctas):
-            matriz_resultante.append(matriz[i])
-        matriz_resultante.append(elementos_a_agregar)
-    if len(matriz_resultante) != dimensiones[0]:
-        elementos_no_coincidentes = seleccionar_elementos_no_coincidentes_entre_matrices(matriz, matriz_resultante)
-        for _ in range(filas_correctas, dimensiones[0]):
-            pass
-
-
-
 # Interfaz
 
 def calcular_dimensiones_matriz(matriz:list)->tuple:
@@ -125,7 +62,8 @@ def imprimir_interfaz_matriz(matriz:list, espacios_ocupados:int, resueltas:list 
 ### Otras funciones
 
 def falso_in(elemento_a_buscar:any, lugar_donde_buscar:any)->bool:
+    resultado = False
     for elemento in lugar_donde_buscar:
         if elemento_a_buscar == elemento:
-            return True
-    return False
+            resultado = True
+    return resultado
