@@ -17,7 +17,8 @@ def crear_boton(pantalla, posicion, dimension, texto=None, fuente=None, path_ima
     boton["Rectangulo"].topleft = boton["Posicion"]
     return boton
 
-def dibujar_boton(boton):
+def dibujar_boton(boton,ventana_principal):
+    pygame.draw.rect(ventana_principal, boton["Color Fondo"], boton["Rectangulo"])
     boton["Pantalla"].blit(boton["Superficie"], boton["Rectangulo"])
 
 def dibujar_boton_texto(boton_texto):
@@ -29,22 +30,6 @@ def reproducir_sonido(path_sonido):
     pygame.mixer.music.load(path_sonido)
     pygame.mixer.music.play(1)
 
-# def crear_matriz_botones(matriz_juego:list,pantalla,tamaño_pantalla:tuple)->list:
-#     posX = tamaño_pantalla[0] / 7 * 2
-#     posY = tamaño_pantalla[1] / 7 * 2
-#     matriz_botones = crear_matriz(4,4,None)
-#     for i in range(len(matriz_botones)):
-#         for j in range(len(matriz_botones[i])):
-#             matriz_botones[i][j] = crear_boton(pantalla,(posX,posY),(60,60),path_imagen=f"imagenes/eiffel.png")
-#             # matriz_botones[i][j] = crear_boton(pantalla,(posX,posY),(70,70),"aaaa",{"Fuente":"arial",
-#             #                         "Tamaño": 20,
-#             #                         "Color": "Red",
-#             #                         "Color fondo": "White"})
-#             posX += tamaño_pantalla[0] / 7
-#         posX = tamaño_pantalla[0] / 7 * 2
-#         posY += tamaño_pantalla[1] / 7 * 2
-   
-#     return matriz_botones
 
 def crear_matriz_botones(matriz_juego:list, pantalla, tamaño_pantalla:tuple) -> list:
     ancho_boton = 60
@@ -67,6 +52,7 @@ def crear_matriz_botones(matriz_juego:list, pantalla, tamaño_pantalla:tuple) ->
             
             # Crear el botón (esto depende de cómo implementes crear_boton)
             matriz_botones[i][j] = crear_boton(pantalla, (posX, posY), (ancho_boton, alto_boton), path_imagen="imagenes/eiffel.png")
+            matriz_botones[i][j]["Contenido"] = matriz_juego[i][j]
             
     return matriz_botones
 
@@ -74,4 +60,48 @@ def crear_matriz_botones(matriz_juego:list, pantalla, tamaño_pantalla:tuple) ->
 def mostrar_botones(matriz_botones,pantalla):
     for fila in matriz_botones:
         for columna in fila:
-            dibujar_boton(columna)
+            dibujar_boton(columna,pantalla)    
+
+def actualizar_fondo_boton(boton):
+    if boton["Estado"]:
+        boton["Color Fondo"] = "Green"
+    else:
+        boton["Color Fondo"] = "Grey"
+
+def comprobar_colision_y_actualizar(lista_botones,evento):
+    for boton in lista_botones:
+        if boton["Rectangulo"].collidepoint(evento.pos):
+            boton["Estado"] = not boton["Estado"]
+            actualizar_fondo_boton(boton)
+            print(boton["Contenido"])
+
+def actualizar_estado_botones(matriz_botones:list,evento):
+    for fila in matriz_botones:
+        comprobar_colision_y_actualizar(fila,evento)
+
+def deseleccionar_botones(matriz_botones):
+    for fila in matriz_botones:
+        for boton in fila:
+            boton["Estado"] = False
+            boton["Color Fondo"] = "Grey"
+
+def agregar_categoria_seleccionada(lista_botones,categorias_seleccionadas):
+    elementos_seleccionados = 0
+    for boton in lista_botones:
+        if boton["Estado"]:
+            categorias_seleccionadas.add(boton["Contenido"][1])
+            elementos_seleccionados += 1
+    return elementos_seleccionados
+
+def verificar_seleccion_correcta_y_actualizar(matriz_botones,stats):
+    elementos_seleccionados = 0
+    categorias_seleccionadas = set()
+    for fila in matriz_botones:
+        elementos_seleccionados += agregar_categoria_seleccionada(fila,categorias_seleccionadas)
+    if len(categorias_seleccionadas) > 1:
+        print("error")
+        deseleccionar_botones(matriz_botones)
+    elif elementos_seleccionados == 4:
+        print("grupo acertado")
+        deseleccionar_botones(matriz_botones)
+        

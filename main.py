@@ -97,8 +97,8 @@ texto = fuente.render("Ualala señor frances", False, "Blue", "White")
 fondo = pygame.image.load("imagenes/fondo.jpeg").convert()
 fondo = pygame.transform.scale(fondo, PANTALLA)
 
-valores_juego = inicializar_juego()
-matriz_desordenada,secuencias,matriz = valores_juego["matriz_desordenada"], valores_juego["secuencias"], valores_juego["matriz"]
+stats = inicializar_juego()
+matriz_desordenada,secuencias,matriz = stats["matriz_desordenada"], stats["secuencias"], stats["matriz"]
 matriz_botones = crear_matriz_botones(matriz_desordenada,ventana_principal,PANTALLA)
 
 while flag_juego:
@@ -106,13 +106,9 @@ while flag_juego:
         if evento.type == pygame.QUIT:
             flag_juego = False
         elif evento.type == pygame.MOUSEBUTTONDOWN:
-            pass
+            actualizar_estado_botones(matriz_botones,evento)
+    verificar_seleccion_correcta_y_actualizar(matriz_botones,stats)
     mostrar_botones(matriz_botones,ventana_principal)
-
-    # imagen_rect = boton_eifel["Superficie"].get_rect(center=boton_eifel["Rectangulo"].center)
-    # pygame.draw.rect(ventana_principal, boton_eifel["Color Fondo"], boton_eifel["Rectangulo"])  # Fondo del botón
-    # pygame.draw.rect(ventana_principal, boton_cabildo["Color Fondo"], boton_cabildo["Rectangulo"])  # Fondo del botón
-    # pygame.draw.rect(ventana_principal, "Blue", boton_texto["Rectangulo"], 2)  # Fondo del botón
 
     pygame.display.update()
     
