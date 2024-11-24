@@ -35,7 +35,7 @@ def jugar_agrupados()->None:
     promedio_tiempo_nivel = round((fin_juego - valores_juego["inicio_juego"]) / valores_juego["stats"]["nivel"])
     guardar_stats_json(valores_juego["stats"],promedio_tiempo_nivel,"StatsUser.json")
 
-jugar_agrupados()
+# jugar_agrupados()
 
 
 
@@ -66,22 +66,20 @@ jugar_agrupados()
 
 
 
+PANTALLA = 600,600
+flag_juego = True
+pygame.init()
 
-# PANTALLA = 1000,800
-# flag_juego = True
-# pygame.init()
-
-# ventana_principal = pygame.display.set_mode(PANTALLA)
-# pygame.display.set_caption("Juego prueba")
-
+ventana_principal = pygame.display.set_mode(PANTALLA)
+pygame.display.set_caption("Juego prueba")
 # boton_eifel = crear_boton(pantalla= ventana_principal,
 #                     posicion= (40,40),
-#                     dimension= (50,50),
+#                     dimension= (70,70),
 #                     path_imagen="imagenes/eiffel.png")
 
 # boton_cabildo = crear_boton(pantalla=ventana_principal,
 #                             posicion= (200,40),
-#                             dimension= (50,50),
+#                             dimension= (70,70),
 #                             path_imagen="imagenes/cabildo.png")
 
 # boton_texto = crear_boton(pantalla=ventana_principal,
@@ -93,41 +91,28 @@ jugar_agrupados()
 #                                     "Color": "Red",
 #                                     "Color fondo": "White"})
 
-# fuente = pygame.font.SysFont("arial",20)
-# texto = fuente.render("Ualala señor frances", False, "Blue", "White")
+fuente = pygame.font.SysFont("arial",20)
+texto = fuente.render("Ualala señor frances", False, "Blue", "White")
 
-# fondo = pygame.image.load("imagenes/fondo.jpeg").convert()
-# fondo = pygame.transform.scale(fondo, PANTALLA)
+fondo = pygame.image.load("imagenes/fondo.jpeg").convert()
+fondo = pygame.transform.scale(fondo, PANTALLA)
 
+valores_juego = inicializar_juego()
+matriz_desordenada,secuencias,matriz = valores_juego["matriz_desordenada"], valores_juego["secuencias"], valores_juego["matriz"]
+matriz_botones = crear_matriz_botones(matriz_desordenada,ventana_principal,PANTALLA)
 
-# while flag_juego:
-#     for evento in pygame.event.get():
-#         if evento.type == pygame.QUIT:
-#             flag_juego = False
-#         elif evento.type == pygame.MOUSEBUTTONDOWN:
-#             if boton_eifel["Rectangulo"].collidepoint(evento.pos):
-#                 boton_eifel["Estado"] = True
-#             elif boton_cabildo["Rectangulo"].collidepoint(evento.pos):
-#                 boton_cabildo["Estado"] = True
-#             elif boton_texto["Rectangulo"].collidepoint(evento.pos):
-#                 reproducir_sonido("imagenes/correcto.mp3")
+while flag_juego:
+    for evento in pygame.event.get():
+        if evento.type == pygame.QUIT:
+            flag_juego = False
+        elif evento.type == pygame.MOUSEBUTTONDOWN:
+            pass
+    mostrar_botones(matriz_botones,ventana_principal)
 
-#     ventana_principal.blit(fondo, (0,0))  # Fondo de la pantalla
-#     dibujar(boton_eifel)
-#     dibujar(boton_cabildo)
-#     dibujar(boton_texto)
-#     if boton_eifel["Estado"]:
-#         # ventana_principal.blit(texto, (300,500))
-#         boton_eifel["Color Fondo"] = "Green"
-#     if boton_cabildo["Estado"]:
-#         boton_cabildo["Color Fondo"] = "Green"
+    # imagen_rect = boton_eifel["Superficie"].get_rect(center=boton_eifel["Rectangulo"].center)
+    # pygame.draw.rect(ventana_principal, boton_eifel["Color Fondo"], boton_eifel["Rectangulo"])  # Fondo del botón
+    # pygame.draw.rect(ventana_principal, boton_cabildo["Color Fondo"], boton_cabildo["Rectangulo"])  # Fondo del botón
+    # pygame.draw.rect(ventana_principal, "Blue", boton_texto["Rectangulo"], 2)  # Fondo del botón
 
-#     imagen_rect = boton_eifel["Superficie"].get_rect(center=boton_eifel["Rectangulo"].center)
-#     pygame.draw.rect(ventana_principal, boton_eifel["Color Fondo"], boton_eifel["Rectangulo"])  # Fondo del botón
-#     pygame.draw.rect(ventana_principal, boton_cabildo["Color Fondo"], boton_cabildo["Rectangulo"])  # Fondo del botón
-#     pygame.draw.rect(ventana_principal, "Blue", boton_texto["Rectangulo"], 2)  # Fondo del botón
-
-#     ventana_principal.blit(boton_eifel["Superficie"], boton_eifel["Rectangulo"])  # Imagen del botón
-#     ventana_principal.blit(boton_cabildo["Superficie"], boton_cabildo["Rectangulo"])
-#     pygame.display.update()
+    pygame.display.update()
     
