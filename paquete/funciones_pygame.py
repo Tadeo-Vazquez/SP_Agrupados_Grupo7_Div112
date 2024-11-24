@@ -18,8 +18,8 @@ def crear_boton(pantalla, posicion, dimension, texto=None, fuente=None, path_ima
     boton["Rectangulo"].topleft = boton["Posicion"]
     return boton
 
-def dibujar(boton):
-    boton["Pantalla"].blit(boton["Superficie"], boton["Rectangulo"])
+def dibujar(elemento):
+    elemento["Pantalla"].blit(elemento["Superficie"], elemento["Rectangulo"])
 
 def reproducir_sonido(path_sonido):
     pygame.mixer.init()

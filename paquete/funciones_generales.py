@@ -192,8 +192,9 @@ def manejar_aciertos(stats):
         if stats["nivel"] == 5:
             print("Has ganado el juego")
             resultado = 2
-        reasignacion_stats(True,stats)
-        print(f"Ganaste. Pasaste al nivel {stats['nivel']}")
+        else:
+            reasignacion_stats(True,stats)
+            print(f"Ganaste. Pasaste al nivel {stats['nivel']}")
     return resultado
 
 def manejar_errores(stats):

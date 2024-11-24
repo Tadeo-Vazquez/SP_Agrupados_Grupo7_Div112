@@ -21,7 +21,7 @@ def jugar_agrupados()->None:
                 secuencias,matriz,matriz_desordenada = reasignacion_matriz_juego(matriz_desordenada,secuencias,matriz)
             elif valor_acierto == 2:
                 fin_juego = time.time()
-                break
+                valores_juego["flag_juego"] = False
         else:
             valor_error = manejar_errores(valores_juego["stats"])
             if valor_error == 2:
@@ -67,6 +67,8 @@ jugar_agrupados()
 
 
 
+
+
 # PANTALLA = 1000,800
 # flag_juego = True
 # pygame.init()
@@ -77,7 +79,7 @@ jugar_agrupados()
 # boton_eifel = crear_boton(pantalla= ventana_principal,
 #                     posicion= (40,40),
 #                     dimension= (50,50),
-#                     path_imagen="imagenes/eiffel.png")
+#                     path_imagen="imagenes/torre eiffel.png")
 
 # boton_cabildo = crear_boton(pantalla=ventana_principal,
 #                             posicion= (200,40),
@@ -108,7 +110,11 @@ jugar_agrupados()
 #             if boton_eifel["Rectangulo"].collidepoint(evento.pos):
 #                 boton_eifel["Estado"] = True
 #             elif boton_cabildo["Rectangulo"].collidepoint(evento.pos):
-#                 boton_cabildo["Estado"] = True
+#                 print("cabildo")
+#                 if boton_cabildo["Estado"]:
+#                     boton_cabildo["Estado"] = False
+#                 else:
+#                     boton_cabildo["Estado"] = True
 #             elif boton_texto["Rectangulo"].collidepoint(evento.pos):
 #                 reproducir_sonido("imagenes/correcto.mp3")
 
@@ -117,17 +123,18 @@ jugar_agrupados()
 #     dibujar(boton_cabildo)
 #     dibujar(boton_texto)
 #     if boton_eifel["Estado"]:
-#         # ventana_principal.blit(texto, (300,500))
 #         boton_eifel["Color Fondo"] = "Green"
 #     if boton_cabildo["Estado"]:
 #         boton_cabildo["Color Fondo"] = "Green"
+#     else:
+#         boton_cabildo["Color Fondo"] = "Grey"
 
 #     imagen_rect = boton_eifel["Superficie"].get_rect(center=boton_eifel["Rectangulo"].center)
 #     pygame.draw.rect(ventana_principal, boton_eifel["Color Fondo"], boton_eifel["Rectangulo"])  # Fondo del botón
 #     pygame.draw.rect(ventana_principal, boton_cabildo["Color Fondo"], boton_cabildo["Rectangulo"])  # Fondo del botón
 #     pygame.draw.rect(ventana_principal, "Blue", boton_texto["Rectangulo"], 2)  # Fondo del botón
 
-#     ventana_principal.blit(boton_eifel["Superficie"], boton_eifel["Rectangulo"])  # Imagen del botón
-#     ventana_principal.blit(boton_cabildo["Superficie"], boton_cabildo["Rectangulo"])
+#     dibujar(boton_eifel)
+#     dibujar(boton_cabildo)
 #     pygame.display.update()
     
