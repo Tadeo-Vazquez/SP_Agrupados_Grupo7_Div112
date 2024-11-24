@@ -93,6 +93,18 @@ def agregar_categoria_seleccionada(lista_botones,categorias_seleccionadas):
             elementos_seleccionados += 1
     return elementos_seleccionados
 
+def reordenar_grupo_acertado(stats,matriz_botones):
+    aciertos = stats["aciertos"]
+    elementos_ordenados = 0
+    for i in range(len(matriz_botones)):
+        for j in range(len(matriz_botones[i])):
+            if matriz_botones[i][j]["Estado"]:
+                posicion_aux = matriz_botones[i][j]["Posicion"]
+                matriz_botones[i][j]["Posicion"] = matriz_botones[aciertos][elementos_ordenados]["Posicion"]
+                matriz_botones[aciertos][elementos_ordenados]["Posicion"] = posicion_aux
+                elementos_ordenados += 1
+
+
 def verificar_seleccion_correcta_y_actualizar(matriz_botones,stats):
     elementos_seleccionados = 0
     categorias_seleccionadas = set()
@@ -103,5 +115,7 @@ def verificar_seleccion_correcta_y_actualizar(matriz_botones,stats):
         deseleccionar_botones(matriz_botones)
     elif elementos_seleccionados == 4:
         print("grupo acertado")
+        reordenar_grupo_acertado(stats,matriz_botones)
+        stats["aciertos"] += 1
         deseleccionar_botones(matriz_botones)
         

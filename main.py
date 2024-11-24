@@ -97,8 +97,9 @@ texto = fuente.render("Ualala señor frances", False, "Blue", "White")
 fondo = pygame.image.load("imagenes/fondo.jpeg").convert()
 fondo = pygame.transform.scale(fondo, PANTALLA)
 
-stats = inicializar_juego()
-matriz_desordenada,secuencias,matriz = stats["matriz_desordenada"], stats["secuencias"], stats["matriz"]
+valores_juego = inicializar_juego()
+matriz_desordenada,secuencias,matriz = valores_juego["matriz_desordenada"], valores_juego["secuencias"], valores_juego["matriz"]
+stats = valores_juego["stats"]
 matriz_botones = crear_matriz_botones(matriz_desordenada,ventana_principal,PANTALLA)
 
 while flag_juego:
