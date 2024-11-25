@@ -66,36 +66,15 @@ def jugar_agrupados()->None:
 
 
 
-PANTALLA = 600,600
+PANTALLA = 800,800
 flag_juego = True
 pygame.init()
 
 ventana_principal = pygame.display.set_mode(PANTALLA)
 pygame.display.set_caption("Juego prueba")
-# boton_eifel = crear_boton(pantalla= ventana_principal,
-#                     posicion= (40,40),
-#                     dimension= (70,70),
-#                     path_imagen="imagenes/eiffel.png")
-
-# boton_cabildo = crear_boton(pantalla=ventana_principal,
-#                             posicion= (200,40),
-#                             dimension= (70,70),
-#                             path_imagen="imagenes/cabildo.png")
-
-# boton_texto = crear_boton(pantalla=ventana_principal,
-#                             posicion= (500,500),
-#                             dimension= (50,50),
-#                             texto="Good job",
-#                             fuente={"Fuente":"arial",
-#                                     "Tamaño": 20,
-#                                     "Color": "Red",
-#                                     "Color fondo": "White"})
 
 fuente = pygame.font.SysFont("arial",20)
 texto = fuente.render("Ualala señor frances", False, "Blue", "White")
-
-fondo = pygame.image.load("imagenes/fondo.jpeg").convert()
-fondo = pygame.transform.scale(fondo, PANTALLA)
 
 valores_juego = inicializar_juego()
 matriz_desordenada,secuencias,matriz = valores_juego["matriz_desordenada"], valores_juego["secuencias"], valores_juego["matriz"]
@@ -108,7 +87,8 @@ while flag_juego:
             flag_juego = False
         elif evento.type == pygame.MOUSEBUTTONDOWN:
             actualizar_estado_botones(matriz_botones,evento)
-    verificar_seleccion_correcta_y_actualizar(matriz_botones,stats)
+            verificar_seleccion_correcta_y_actualizar(matriz_botones,stats)
+    # verificar_seleccion_correcta_y_actualizar(matriz_botones,stats)
     mostrar_botones(matriz_botones,ventana_principal)
 
     pygame.display.update()

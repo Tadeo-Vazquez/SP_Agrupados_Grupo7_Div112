@@ -6,6 +6,7 @@ def crear_boton(pantalla, posicion, dimension, texto=None, fuente=None, path_ima
     boton["Posicion"] = posicion
     boton["Dimension"] = dimension
     boton["Estado"] = False
+    boton["Acertado"] = False
     boton["Color Fondo"] = "Grey"
     if path_imagen != None:
         imagen = pygame.image.load(path_imagen)
@@ -34,7 +35,7 @@ def reproducir_sonido(path_sonido):
 def crear_matriz_botones(matriz_juego:list, pantalla, tamaño_pantalla:tuple) -> list:
     ancho_boton = 60
     alto_boton = 60
-    espacio = tamaño_pantalla[0] / 7 / 2 # Espacio entre botones (la mitad del margen)
+    espacio = 100 # Espacio entre botones (la mitad del margen)
     # Calcular el espacio total ocupado por los botones
     total_boton_ancho = 4 * ancho_boton + 3 * espacio  # 4 botones + 3 espacios entre ellos
     total_boton_alto = 4 * alto_boton + 3 * espacio   # 4 botones + 3 espacios entre ellos
@@ -49,9 +50,8 @@ def crear_matriz_botones(matriz_juego:list, pantalla, tamaño_pantalla:tuple) ->
         for j in range(len(matriz_botones[i])):
             posX = inicio_X + j * (ancho_boton + espacio)
             posY = inicio_Y + i * (alto_boton + espacio)
-            
             # Crear el botón (esto depende de cómo implementes crear_boton)
-            matriz_botones[i][j] = crear_boton(pantalla, (posX, posY), (ancho_boton, alto_boton), path_imagen="imagenes/eiffel.png")
+            matriz_botones[i][j] = crear_boton(pantalla, (posX, posY), (ancho_boton, alto_boton), path_imagen=f"imagenes/{matriz_juego[i][j][1]}/{matriz_juego[i][j][0]}.png")
             matriz_botones[i][j]["Contenido"] = matriz_juego[i][j]
             
     return matriz_botones
@@ -59,8 +59,8 @@ def crear_matriz_botones(matriz_juego:list, pantalla, tamaño_pantalla:tuple) ->
 
 def mostrar_botones(matriz_botones,pantalla):
     for fila in matriz_botones:
-        for columna in fila:
-            dibujar_boton(columna,pantalla)    
+        for boton in fila:
+            dibujar_boton(boton,pantalla)    
 
 def actualizar_fondo_boton(boton):
     if boton["Estado"]:
@@ -70,10 +70,11 @@ def actualizar_fondo_boton(boton):
 
 def comprobar_colision_y_actualizar(lista_botones,evento):
     for boton in lista_botones:
-        if boton["Rectangulo"].collidepoint(evento.pos):
-            boton["Estado"] = not boton["Estado"]
+        if boton["Rectangulo"].collidepoint(evento.pos) and boton["Acertado"] == False:
+            boton["Estado"] = True
             actualizar_fondo_boton(boton)
             print(boton["Contenido"])
+
 
 def actualizar_estado_botones(matriz_botones:list,evento):
     for fila in matriz_botones:
@@ -82,40 +83,80 @@ def actualizar_estado_botones(matriz_botones:list,evento):
 def deseleccionar_botones(matriz_botones):
     for fila in matriz_botones:
         for boton in fila:
-            boton["Estado"] = False
-            boton["Color Fondo"] = "Grey"
+            if boton["Acertado"] == False:
+                boton["Estado"] = False
+                boton["Color Fondo"] = "Grey"
+                boton["Rectangulo"].topleft = boton["Posicion"]
 
 def agregar_categoria_seleccionada(lista_botones,categorias_seleccionadas):
     elementos_seleccionados = 0
     for boton in lista_botones:
-        if boton["Estado"]:
+        if boton["Estado"] and boton["Acertado"] == False:
             categorias_seleccionadas.add(boton["Contenido"][1])
             elementos_seleccionados += 1
     return elementos_seleccionados
 
+def contar_seleccionados(matriz_botones):
+    elementos_seleccionados = 0
+    for fila in matriz_botones:
+        for boton in fila:
+            if boton["Estado"]:
+                elementos_seleccionados+=1
+    return elementos_seleccionados
+
+def obtener_botones_seleccionados(matriz_botones):
+    botones_seleccionados = []
+    for fila in matriz_botones:
+        for boton in fila:
+            if boton["Estado"]:
+                botones_seleccionados.append(boton)
+    return botones_seleccionados
+
 def reordenar_grupo_acertado(stats,matriz_botones):
-    aciertos = stats["aciertos"]
-    elementos_ordenados = 0
-    for i in range(len(matriz_botones)):
-        for j in range(len(matriz_botones[i])):
-            if matriz_botones[i][j]["Estado"]:
-                posicion_aux = matriz_botones[i][j]["Posicion"]
-                matriz_botones[i][j]["Posicion"] = matriz_botones[aciertos][elementos_ordenados]["Posicion"]
-                matriz_botones[aciertos][elementos_ordenados]["Posicion"] = posicion_aux
-                elementos_ordenados += 1
+    grupos_ordenados = stats["aciertos"]
+    fila_actual = matriz_botones[grupos_ordenados]
+    seleccionados = obtener_botones_seleccionados(matriz_botones)
+    seleccionados.sort(key=lambda b: b["Posicion"][1])
+    #region lambda
+    # lambda b: Crea una función anónima que toma un argumento b. En este caso, b es un botón de la lista seleccionados.
+    # b["Posicion"][1]: Dentro de la función anónima, se toma la propiedad Posicion del botón b, que se supone es una tupla o lista, y se accede al segundo valor (índice 1), que sería la posición vertical (y) del botón.
+    # key=lambda b: b["Posicion"][1]: Este lambda se utiliza como función clave para ordenar. Es decir, cada elemento b de la lista seleccionados se ordenará según su valor en b["Posicion"][1] (la posición vertical).
+    #endregion
+    for i, boton in enumerate(seleccionados):
+        boton["Posicion"], fila_actual[i]["Posicion"] = fila_actual[i]["Posicion"], boton["Posicion"]
+
+        boton["Rectangulo"].topleft = boton["Posicion"]
+        fila_actual[i]["Rectangulo"].topleft = fila_actual[i]["Posicion"]
+
+        boton["Acertado"] = True
+        boton["Color Fondo"] = "Blue"  # Cambiar el color de fondo
+    # for fila in matriz_botones:
+    #     for boton in fila:
+    #         if boton["Estado"] and boton["Acertado"] == False:
+    #             boton["Posicion"],fila_actual[ordenados]["Posicion"] =  fila_actual[ordenados]["Posicion"],boton["Posicion"]
+    #             boton["Color Fondo"] = "Blue"
+    #             boton["Rectangulo"].topleft = boton["Posicion"]
+    #             fila_actual[ordenados]["Rectangulo"].topleft = fila_actual[ordenados]["Posicion"]
+    #             boton["Acertado"] = True
+    #             boton["Estado"] = False
+    #             ordenados += 1
+    #             if ordenados == 4:
+    #                 break
+    stats["aciertos"] += 1
 
 
 def verificar_seleccion_correcta_y_actualizar(matriz_botones,stats):
-    elementos_seleccionados = 0
+    elementos_seleccionados = contar_seleccionados(matriz_botones)
     categorias_seleccionadas = set()
     for fila in matriz_botones:
-        elementos_seleccionados += agregar_categoria_seleccionada(fila,categorias_seleccionadas)
+        agregar_categoria_seleccionada(fila,categorias_seleccionadas)
     if len(categorias_seleccionadas) > 1:
         print("error")
         deseleccionar_botones(matriz_botones)
     elif elementos_seleccionados == 4:
         print("grupo acertado")
+        categorias_seleccionadas = set()
         reordenar_grupo_acertado(stats,matriz_botones)
-        stats["aciertos"] += 1
-        deseleccionar_botones(matriz_botones)
+    
+    return True
         
