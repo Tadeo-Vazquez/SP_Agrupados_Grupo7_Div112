@@ -80,6 +80,7 @@ valores_juego = inicializar_juego()
 matriz_desordenada,secuencias,matriz = valores_juego["matriz_desordenada"], valores_juego["secuencias"], valores_juego["matriz"]
 stats = valores_juego["stats"]
 matriz_botones = crear_matriz_botones(matriz_desordenada,ventana_principal,PANTALLA)
+filas_ordenadas = 0
 
 while flag_juego:
     for evento in pygame.event.get():
@@ -87,8 +88,13 @@ while flag_juego:
             flag_juego = False
         elif evento.type == pygame.MOUSEBUTTONDOWN:
             actualizar_estado_botones(matriz_botones,evento)
-            verificar_seleccion_correcta_y_actualizar(matriz_botones,stats)
     # verificar_seleccion_correcta_y_actualizar(matriz_botones,stats)
+    if contar_seleccionados(matriz_botones) == 4:
+        if comprobar_seleccionados_y_actualizar(matriz_botones,filas_ordenadas):
+            # actualizar_posicion_botones(matriz_botones,stats)
+            filas_ordenadas += 1
+        deseleccionar_botones(matriz_botones)
+
     mostrar_botones(matriz_botones,ventana_principal)
 
     pygame.display.update()
