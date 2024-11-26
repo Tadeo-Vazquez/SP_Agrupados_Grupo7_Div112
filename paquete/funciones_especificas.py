@@ -1,7 +1,7 @@
 import re
 import random
 import json
-def verificar_append_lista(lista:list,elemento)->bool:
+def contiene(lista:list,elemento)->bool:
     """verifica si un elemento esta cargado dentro de una lista
     Args:
         lista (list): lista a revisar 
@@ -26,7 +26,7 @@ def verificar_elemento_matriz(matriz:list,elemento:any)->bool:
     """
     resultado = None
     for fila in matriz:
-        resultado = verificar_append_lista(fila,elemento) 
+        resultado = contiene(fila,elemento) 
         #     if elemento == columna:
         #         resultado = True
         #         break

@@ -76,7 +76,7 @@ def comprobar_colision_y_actualizar(lista_botones,evento):
     for boton in lista_botones:
         if boton["Rectangulo"].collidepoint(evento.pos) and boton["Acertado"] == False:
             print(boton)
-            boton["Estado"] = True
+            boton["Estado"] = not boton["Estado"]
             actualizar_fondo_boton(boton)
             print(boton["Contenido"])
 
@@ -93,13 +93,13 @@ def deseleccionar_botones(matriz_botones):
                 boton["Color Fondo"] = "Grey"
                 boton["Rectangulo"].topleft = boton["Posicion"]
 
-def agregar_categoria_seleccionada(lista_botones,categorias_seleccionadas):
-    elementos_seleccionados = 0
-    for boton in lista_botones:
-        if boton["Estado"] and boton["Acertado"] == False:
-            categorias_seleccionadas.add(boton["Contenido"][1])
-            elementos_seleccionados += 1
-    return elementos_seleccionados
+def contar_categorias_seleccionadas(matriz_botones):
+    categorias_seleccionadas = set()
+    for fila in matriz_botones:
+        for boton in fila:
+            if boton["Estado"] and boton["Acertado"] == False:
+                categorias_seleccionadas.add(boton["Contenido"][1])
+    return categorias_seleccionadas
 
 def contar_seleccionados(matriz_botones):
     elementos_seleccionados = 0
@@ -119,49 +119,68 @@ def obtener_botones_seleccionados(matriz_botones):
         botones_seleccionados = None
     return botones_seleccionados
 
-# def obtener_primera_fila_sin_acertar(matriz_botones):
-#     fila_target = []
-#     for fila in matriz_botones:
-#         for boton in fila:
-#             if not boton["Acertado"]:
-#                 fila_target.append(boton)
-#     return fila_target[:4]
+def actualizar_posicion_botones(matriz_botones,grupos_ordenados): #FUNCION MAL HECHA REVISAR
+    lista_posiciones = obtener_lista_posiciones((60,60),(800,800),100)
+    botones_seleccionados = obtener_botones_seleccionados(matriz_botones)
+    lista_posiciones_seleccionados = []
+    for boton in botones_seleccionados:
+        lista_posiciones_seleccionados.append(boton["Posicion"])
+    if botones_seleccionados != None and len(botones_seleccionados) == 4:
+        for i, boton in enumerate(botones_seleccionados):
+            nueva_posicion = lista_posiciones[grupos_ordenados * 4 + i]
 
-def intercambiar_posiciones_elemento(elemento1,elemento2):
-    auxPOS = elemento1["Posicion"]
-    auxRECT = elemento1["Rectangulo"]
-    elemento1["Posicion"] = copy.deepcopy(elemento2["Posicion"])
-    elemento1["Rectangulo"] = copy.deepcopy(elemento2["Rectangulo"])
-    elemento2["Posicion"] = auxPOS
-    elemento2["Rectangulo"] = auxRECT
+            boton["Posicion"] = nueva_posicion
+            boton["Rectangulo"].topleft = nueva_posicion
 
-def actualizar_posicion_botones(matriz_botones,filas_ordenadas): #FUNCION MAL HECHA REVISAR
-    elementos_ordenados = 0
-    for i in range(len(matriz_botones)):
-        for j in range(len(matriz_botones[0])):
-            if matriz_botones[i][j]["Acertado"]:
-                intercambiar_posiciones_elemento(matriz_botones[filas_ordenadas][elementos_ordenados],matriz_botones[i][j])
-                elementos_ordenados += 1
-                if elementos_ordenados == 4:
-                    return
+        fila_objetivo = grupos_ordenados
+        for i in range(4):
+            matriz_botones[fila_objetivo][i]["Posicion"] = lista_posiciones_seleccionados[i]
+            matriz_botones[fila_objetivo][i]["Rectangulo"].topleft = lista_posiciones_seleccionados[i]
 
-def comprobar_seleccionados_y_actualizar(matriz_botones,filas_ordenadas):
+
+
+def actualizar_botones_acierto(matriz_botones):
     seleccionados = obtener_botones_seleccionados(matriz_botones)
-    categorias_seleccionadas = set()
     resultado = False
-    for fila in matriz_botones:
-        agregar_categoria_seleccionada(fila,categorias_seleccionadas)
-
-    if len(categorias_seleccionadas) == 1:
-        print("correcto")
-        resultado = True
-        for boton in seleccionados:
-            boton["Color Fondo"] =  (0, 247, 255)
-            boton["Acertado"] = True
-            boton["Estado"] = False
-        # actualizar_posicion_botones(matriz_botones,filas_ordenadas)
-    else:
-        deseleccionar_botones(matriz_botones)
-
+    if len(seleccionados) != 4:
+        return False
+    print("correcto")
+    resultado = True
+    for boton in seleccionados:
+        boton["Color Fondo"] =  (0, 247, 255)
+        boton["Acertado"] = True
     return resultado
-        
+
+def obtener_posiciones_sin_usar(matriz_botones,lista_posiciones):
+    set_posiciones = set(lista_posiciones)
+    set_pos_usadas = set()
+    for fila in matriz_botones:
+        for boton in fila:
+            set_pos_usadas.add(boton["Posicion"])
+
+    posiciones_libres = set_posiciones.difference(set_pos_usadas)
+    lista_posiciones_libres = list(posiciones_libres)
+    return lista_posiciones_libres
+
+
+def reordenar_botones_acierto(matriz_botones,aciertos_previos):
+    botones_acierto = obtener_botones_seleccionados(matriz_botones)
+    lista_posiciones_seleccionados = []
+    for boton in botones_acierto:
+        lista_posiciones_seleccionados.append(boton["Posicion"])
+    lista_posiciones = obtener_lista_posiciones((60,60),(800,800),100)
+    nuevas_posiciones_acierto = []
+    for i,boton in enumerate(botones_acierto):
+        boton["Posicion"] = lista_posiciones[aciertos_previos * 4 + i]
+        boton["Rectangulo"].topleft = boton["Posicion"]
+        boton["Estado"] = False
+        nuevas_posiciones_acierto.append(boton["Posicion"])
+    
+    posiciones_libres = obtener_posiciones_sin_usar(matriz_botones,lista_posiciones)
+
+    for fila in matriz_botones:
+        for boton in fila:
+            if contiene(nuevas_posiciones_acierto,boton["Posicion"]) and boton["Acertado"] == False:
+                boton["Posicion"] = posiciones_libres.pop(0)   
+
+    return True

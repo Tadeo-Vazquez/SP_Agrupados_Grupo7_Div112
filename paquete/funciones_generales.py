@@ -16,7 +16,7 @@ def cargar_matriz_ordenada(secuencias:list,cantidad_secuencias:int)->list:
     matriz_secuencias_ordenadas = []
     for _ in range(cantidad_secuencias):
         secuencia_agregar = secuencias[random.randint(0,len(secuencias)-1)]
-        while verificar_append_lista(matriz_secuencias_ordenadas,secuencia_agregar):
+        while contiene(matriz_secuencias_ordenadas,secuencia_agregar):
             secuencia_agregar = secuencias[random.randint(0,len(secuencias)-1)]
         matriz_secuencias_ordenadas.append(secuencia_agregar)
     return matriz_secuencias_ordenadas
@@ -39,7 +39,7 @@ def averiguar_4categorias_ingresadas(matriz_juego:int,numeros_ingresados:list)->
     for i in range(len(matriz_juego)):
         for j in range(len(matriz_juego[0])):
             contador += 1
-            if verificar_append_lista(numeros_ingresados,contador):
+            if contiene(numeros_ingresados,contador):
                 lista_categorias_ingresadas.append(matriz_juego[i][j][1])
     return lista_categorias_ingresadas
 
@@ -55,7 +55,7 @@ def pedir_4_posiciones(minimo:int,maximo:int)->list:
     posiciones_pedidas = 4
     for _ in range(posiciones_pedidas):
         posicion = get_number_int("Ingresa una posición del grupo: ",minimo,maximo)
-        while verificar_append_lista(lista_posiciones_int,posicion):
+        while contiene(lista_posiciones_int,posicion):
             print("Posición ya ingresada")
             posicion = get_number_int("Ingresa una posición del grupo: ",minimo,maximo)
         if posicion > 16:
@@ -95,7 +95,7 @@ def extraer_4_categorias_usadas(matriz_usada:list)->list:
     categorias_usadas = []
     for fila in matriz_usada:
         for columna in fila:
-            if verificar_append_lista(categorias_usadas,columna[1]) == False:
+            if contiene(categorias_usadas,columna[1]) == False:
                 categorias_usadas.append(columna[1])
     return categorias_usadas
 
@@ -149,19 +149,19 @@ def reasignacion_matriz_juego(matriz_usada:list,lista_secuencias:list,matriz_ord
 def ejecutar_comodin(comodin:int,matriz_juego:list,stats:dict,comodines:list):
     match comodin:
         case 17:
-            if verificar_append_lista(comodines,17):
+            if contiene(comodines,17):
                 comodin_mostrar_categoria(matriz_juego,stats["aciertos"])
                 comodines.remove(17)
             else:
                 print("Comodín ya usado")
         case 18:
-            if verificar_append_lista(comodines,18):
+            if contiene(comodines,18):
                 comodin_emparejar_dos(matriz_juego,stats["aciertos"])
                 comodines.remove(18)
             else:
                 print("Comodín ya usado")
         case 19:
-            if verificar_append_lista(comodines,19):
+            if contiene(comodines,19):
                 comodin_mostrar_elementos_1fila(matriz_juego,3,stats["aciertos"])
                 comodines.remove(19)
             else:

@@ -89,14 +89,21 @@ while flag_juego:
         elif evento.type == pygame.MOUSEBUTTONDOWN:
             actualizar_estado_botones(matriz_botones,evento)
     # verificar_seleccion_correcta_y_actualizar(matriz_botones,stats)
-    if contar_seleccionados(matriz_botones) == 4:
-        if comprobar_seleccionados_y_actualizar(matriz_botones,filas_ordenadas):
-            # actualizar_posicion_botones(matriz_botones,stats)
-            filas_ordenadas += 1
+    if contar_seleccionados(matriz_botones) == 4 and len(contar_categorias_seleccionadas(matriz_botones)) == 1:
+        actualizar_botones_acierto(matriz_botones)
+        reordenar_botones_acierto(matriz_botones,filas_ordenadas)
+        filas_ordenadas += 1
         deseleccionar_botones(matriz_botones)
+    if len(contar_categorias_seleccionadas(matriz_botones)) > 1:
+        print("Error")
+        deseleccionar_botones(matriz_botones)
+    if filas_ordenadas == 4:
+        filas_ordenadas = 0
+        secuencias,matriz,matriz_desordenada = reasignacion_matriz_juego(matriz_desordenada,secuencias,matriz)
+        matriz_botones = crear_matriz_botones(matriz_desordenada,ventana_principal,PANTALLA)
+
 
     mostrar_botones(matriz_botones,ventana_principal)
-
     pygame.display.update()
     
     
