@@ -9,8 +9,10 @@ def jugar_agrupados()->None:
     while valores_juego["flag_juego"]:
         imprimir_interfaz_matriz(matriz_desordenada,18,valores_juego["stats"]) #MOSTRAR LA MATRIZ DE ELEMENTOS
         lista_posiciones = pedir_4_posiciones(valores_juego["stats"]["aciertos"]*4+1,19) #PEDIR LAS 4 POSICIONES
-        if verificar_ingreso_comodin(lista_posiciones[0],matriz_desordenada,valores_juego["stats"],valores_juego["comodines"]): #EJECUTAR COMODIN SI CORRESPONDE
-            continue                                                                                                            #si se ejecuta se continua al siguiente bucle
+        if lista_posiciones[0] > 16:
+            ejecutar_comodin(lista_posiciones[0],matriz_desordenada,valores_juego["stats"],valores_juego["comodines"])
+            pausar_y_limpiar_terminal()
+            continue                                                                                                          #si se ejecuta se continua al siguiente bucle
         lista_cat_ingresadas = averiguar_4categorias_ingresadas(matriz_desordenada,lista_posiciones) #crear una lista con las categorias correspondientes segun las 4 posiciones ingresadas
         acierto = averiguar_coincidencia_4cat(lista_cat_ingresadas) #verifica si las 4 categorias coinciden (True) o si no (False)
 #############################################MANEJAR EL ACIERTO O ERROR###############################################################
@@ -29,11 +31,9 @@ def jugar_agrupados()->None:
                 valores_juego["flag_juego"] = False
             elif valor_error == 1:
                 secuencias,matriz,matriz_desordenada = reasignacion_matriz_juego(matriz_desordenada,secuencias,matriz)
-        system("pause")
-        system("cls")
+        pausar_y_limpiar_terminal()
 ###################################FIN DEL JUEGO. SACA PROMEDIO DE TIEMPO Y GUARDA DATOS EN JSON#######################################   
-    promedio_tiempo_nivel = round((fin_juego - valores_juego["inicio_juego"]) / valores_juego["stats"]["nivel"])
-    guardar_stats_json(valores_juego["stats"],promedio_tiempo_nivel,"StatsUser.json")
+    finalizar_juego(valores_juego,fin_juego)
 
 jugar_agrupados()
 

@@ -166,15 +166,6 @@ def paso_nivel(stats:dict):
         resultado = True
     return resultado
 
-def verificar_ingreso_comodin(posicion:int,matriz_desordenada,stats,comodines):
-    resultado = False
-    if posicion > 16:
-        comodines = ejecutar_comodin(posicion,matriz_desordenada,stats,comodines)
-        system("pause")
-        system("cls")
-        resultado = True
-    return resultado
-
 def manejar_aciertos(stats):
     reasignacion_stats(True,stats)
     print(GREEN_TEXTO + "Acertaste un grupo!" + RESET)

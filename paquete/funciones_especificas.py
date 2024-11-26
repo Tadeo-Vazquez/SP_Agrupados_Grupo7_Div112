@@ -1,6 +1,7 @@
 import re
 import random
 import json
+from os import system
 def contiene(lista:list,elemento)->bool:
     """verifica si un elemento esta cargado dentro de una lista
     Args:
@@ -27,11 +28,6 @@ def verificar_elemento_matriz(matriz:list,elemento:any)->bool:
     resultado = None
     for fila in matriz:
         resultado = contiene(fila,elemento) 
-        #     if elemento == columna:
-        #         resultado = True
-        #         break
-        #     else:
-        #         resultado = False
         if resultado:
             break
     return resultado
@@ -177,3 +173,11 @@ def crear_dict_stats(nombre_user)->dict:
     stats["aciertos"] = 0
     stats["nivel"] = 1
     return stats
+
+def finalizar_juego(valores_juego,fin_juego):
+    promedio_tiempo_nivel = round((fin_juego - valores_juego["inicio_juego"]) / valores_juego["stats"]["nivel"])
+    guardar_stats_json(valores_juego["stats"],promedio_tiempo_nivel,"StatsUser.json")
+
+def pausar_y_limpiar_terminal():
+    system("pause")
+    system("cls")
