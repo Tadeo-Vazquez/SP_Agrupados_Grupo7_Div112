@@ -12,13 +12,17 @@ MAGENTA_TEXTO = '\033[95m'
 CYAN_TEXTO = '\033[96m'
 RESET = '\033[0m'
 
+def obtener_elemento_para_cargar(secuencias,matriz_secuencias_ordenadas):
+    secuencia_agregar = secuencias[random.randint(0,len(secuencias)-1)]
+    while contiene(matriz_secuencias_ordenadas,secuencia_agregar):
+        secuencia_agregar = secuencias[random.randint(0,len(secuencias)-1)]
+    # matriz_secuencias_ordenadas.append(secuencia_agregar)
+    return secuencia_agregar
 
 def cargar_matriz_ordenada(secuencias:list,cantidad_secuencias:int)->list:
     matriz_secuencias_ordenadas = []
     for _ in range(cantidad_secuencias):
-        secuencia_agregar = secuencias[random.randint(0,len(secuencias)-1)]
-        while contiene(matriz_secuencias_ordenadas,secuencia_agregar):
-            secuencia_agregar = secuencias[random.randint(0,len(secuencias)-1)]
+        secuencia_agregar = obtener_elemento_para_cargar(secuencias,matriz_secuencias_ordenadas)
         matriz_secuencias_ordenadas.append(secuencia_agregar)
     return matriz_secuencias_ordenadas
 
@@ -33,6 +37,8 @@ def crear_matriz_4x4_desordenada(matriz_secuencias_ordenadas:list)->list:
     matriz_desordenada = crear_matriz(4,4)
     matriz_desordenada = cargar_matriz_desordenada(matriz_desordenada,matriz_secuencias_ordenadas,16,4,4)
     return matriz_desordenada
+
+#modularizar de aca a abajo
 
 def averiguar_4categorias_ingresadas(matriz_juego:int,numeros_ingresados:list)->list:
     contador = 0
@@ -224,3 +230,35 @@ def inicializar_juego() -> dict:
         "matriz_desordenada": matriz_desordenada,
         "stats": stats
     }
+
+#funciones para reducir
+
+def ejecutar_acierto(secuencias,matriz,matriz_usada,valores_juego,lista_cat_ingresadas):
+    matriz_desordenada = reordenar_acierto_matriz(matriz_usada,valores_juego["stats"]["aciertos"],lista_cat_ingresadas[0])
+    valor_acierto = manejar_aciertos(valores_juego["stats"])
+    if valor_acierto == 1:
+        secuencias,matriz,matriz_desordenada = reasignacion_matriz_juego(matriz_desordenada,secuencias,matriz)
+    elif valor_acierto == 2:
+        valores_juego["fin_juego"] = time.time()
+        valores_juego["flag_juego"] = False
+
+    return matriz_desordenada,secuencias,matriz
+
+def ejecutar_error(valores_juego,secuencias,matriz,matriz_desordenada):
+    valor_error = manejar_errores(valores_juego["stats"])
+    if valor_error == 2:
+        valores_juego["fin_juego"] = time.time()
+        valores_juego["flag_juego"] = False
+    elif valor_error == 1:
+        secuencias,matriz,matriz_desordenada = reasignacion_matriz_juego(matriz_desordenada,secuencias,matriz)
+    
+    return secuencias,matriz,matriz_desordenada
+
+def pedir_posiciones_y_ejecutar_comodin(valores_juego,matriz_desordenada):
+    lista_posiciones = pedir_4_posiciones(valores_juego["stats"]["aciertos"]*4+1,19) #PEDIR LAS 4 POSICIONES
+    ejecuto_comodin = False
+    if lista_posiciones[0] > 16:
+        ejecutar_comodin(lista_posiciones[0],matriz_desordenada,valores_juego["stats"],valores_juego["comodines"])
+        pausar_y_limpiar_terminal()
+        ejecuto_comodin = True              
+    return lista_posiciones,ejecuto_comodin

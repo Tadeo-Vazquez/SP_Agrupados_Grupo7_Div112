@@ -174,8 +174,8 @@ def crear_dict_stats(nombre_user)->dict:
     stats["nivel"] = 1
     return stats
 
-def finalizar_juego(valores_juego,fin_juego):
-    promedio_tiempo_nivel = round((fin_juego - valores_juego["inicio_juego"]) / valores_juego["stats"]["nivel"])
+def finalizar_juego(valores_juego):
+    promedio_tiempo_nivel = round((valores_juego["fin_juego"] - valores_juego["inicio_juego"]) / valores_juego["stats"]["nivel"])
     guardar_stats_json(valores_juego["stats"],promedio_tiempo_nivel,"StatsUser.json")
 
 def pausar_y_limpiar_terminal():
