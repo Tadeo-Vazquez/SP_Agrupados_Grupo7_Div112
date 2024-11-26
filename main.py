@@ -35,7 +35,7 @@ def jugar_agrupados()->None:
     promedio_tiempo_nivel = round((fin_juego - valores_juego["inicio_juego"]) / valores_juego["stats"]["nivel"])
     guardar_stats_json(valores_juego["stats"],promedio_tiempo_nivel,"StatsUser.json")
 
-# jugar_agrupados()
+jugar_agrupados()
 
 
 
@@ -73,35 +73,44 @@ pygame.init()
 ventana_principal = pygame.display.set_mode(PANTALLA)
 pygame.display.set_caption("Juego prueba")
 
-fuente = pygame.font.SysFont("arial",20)
-texto = fuente.render("Ualala señor frances", False, "Blue", "White")
-
 valores_juego = inicializar_juego()
+nombre_user = pedir_nombre_en_pantalla(PANTALLA,ventana_principal) #llamar funcion nombre user
+print(nombre_user)
 matriz_desordenada,secuencias,matriz = valores_juego["matriz_desordenada"], valores_juego["secuencias"], valores_juego["matriz"]
 stats = valores_juego["stats"]
 matriz_botones = crear_matriz_botones(matriz_desordenada,ventana_principal,PANTALLA)
 filas_ordenadas = 0
+fondo = pygame.image.load("imagenes/fondo.jpg")
+fondo = pygame.transform.scale(fondo,(PANTALLA))
 
 while flag_juego:
+    ventana_principal.blit(fondo,(0,0))
     for evento in pygame.event.get():
         if evento.type == pygame.QUIT:
             flag_juego = False
         elif evento.type == pygame.MOUSEBUTTONDOWN:
             actualizar_estado_botones(matriz_botones,evento)
-    # verificar_seleccion_correcta_y_actualizar(matriz_botones,stats)
+    # verificar_seleccion_correcta_y_actualizar
     if contar_seleccionados(matriz_botones) == 4 and len(contar_categorias_seleccionadas(matriz_botones)) == 1:
-        actualizar_botones_acierto(matriz_botones)
-        reordenar_botones_acierto(matriz_botones,filas_ordenadas)
+        matriz_botones = actualizar_botones_acierto(matriz_botones)
+        matriz_botones = reordenar_botones_acierto(matriz_botones,filas_ordenadas,PANTALLA)
         filas_ordenadas += 1
         deseleccionar_botones(matriz_botones)
+
     if len(contar_categorias_seleccionadas(matriz_botones)) > 1:
         print("Error")
         deseleccionar_botones(matriz_botones)
+
     if filas_ordenadas == 4:
         filas_ordenadas = 0
         secuencias,matriz,matriz_desordenada = reasignacion_matriz_juego(matriz_desordenada,secuencias,matriz)
         matriz_botones = crear_matriz_botones(matriz_desordenada,ventana_principal,PANTALLA)
-
+        if stats["nivel"] == 5:
+            mostrar_stats_fin_juego()
+            flag_juego = False
+        else:
+            stats["nivel"] += 1
+            continuar_siguiente_nivel(PANTALLA,ventana_principal,stats)
 
     mostrar_botones(matriz_botones,ventana_principal)
     pygame.display.update()

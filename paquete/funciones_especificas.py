@@ -168,12 +168,11 @@ def reasignacion_stats(acierto:bool,stats:dict)->dict: #sin usar: acortar codigo
         reasignar_stats_perdida(stats)
     return stats
 
-def crear_dict_stats(nombre_user)->dict:
+def crear_dict_stats()->dict:
     stats = {}
     stats["puntaje"] = 0
     stats["vidas nivel"] = 3
     stats["reinicios"] = 3
     stats["aciertos"] = 0
     stats["nivel"] = 1
-    stats["nombre usuario"] = nombre_user
     return stats

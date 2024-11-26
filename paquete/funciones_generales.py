@@ -1,5 +1,6 @@
 from paquete.funciones_especificas import *
 from paquete.funciones_input import *
+from paquete.funciones_pygame import *
 from os import system
 import time
 
@@ -215,16 +216,16 @@ def inicializar_juego() -> dict:
     flag_juego = True
     comodines = [17, 18, 19]
     inicio_juego = time.time()
-    nombre_user = pedir_nombre_user(3, 20)
+    # nombre_user = pedir_nombre_en_pantalla(tamaño_pantalla,ventana_principal) #cambiar por funcion de pygame
     secuencias = convertir_csv_lista("secuencias.csv")
     matriz = cargar_matriz_ordenada(secuencias, 4)
     matriz_desordenada = crear_matriz_4x4_desordenada(matriz)
-    stats = crear_dict_stats(nombre_user)
+    stats = crear_dict_stats()
     return {
         "flag_juego": flag_juego,
         "comodines": comodines,
         "inicio_juego": inicio_juego,
-        "nombre_user": nombre_user,
+        # "nombre_user": nombre_user,
         "secuencias": secuencias,
         "matriz": matriz,
         "matriz_desordenada": matriz_desordenada,

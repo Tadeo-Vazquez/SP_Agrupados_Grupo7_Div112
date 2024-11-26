@@ -1,6 +1,8 @@
 import pygame
 from paquete.funciones_generales import *
-import copy
+from paquete.func_pygame_especificas import *
+from paquete.funciones_especificas import *
+
 def crear_boton(pantalla, posicion, dimension, texto=None, fuente=None, path_imagen=None):
     boton = {}
     boton["Pantalla"] = pantalla
@@ -18,19 +20,6 @@ def crear_boton(pantalla, posicion, dimension, texto=None, fuente=None, path_ima
     boton["Rectangulo"] = boton["Superficie"].get_rect()
     boton["Rectangulo"].topleft = boton["Posicion"]
     return boton
-
-def dibujar_boton(boton,ventana_principal):
-    pygame.draw.rect(ventana_principal, boton["Color Fondo"], boton["Rectangulo"])
-    boton["Pantalla"].blit(boton["Superficie"], boton["Rectangulo"])
-
-def dibujar_boton_texto(boton_texto):
-    pygame.draw.rect(boton_texto["Pantalla"],"Red",boton_texto["Rectangulo"])
-    boton_texto["Pantalla"].blit(boton_texto["Superficie"],boton_texto["Rectangulo"])
-
-def reproducir_sonido(path_sonido):
-    pygame.mixer.init()
-    pygame.mixer.music.load(path_sonido)
-    pygame.mixer.music.play(1)
 
 def obtener_lista_posiciones(tamaño_boton,tamaño_pantalla,espacio):
     lista_posiciones = []
@@ -60,26 +49,11 @@ def crear_matriz_botones(matriz_juego:list, pantalla, tamaño_pantalla:tuple) ->
             pos += 1
     return matriz_botones
 
-
-def mostrar_botones(matriz_botones,pantalla):
-    for fila in matriz_botones:
-        for boton in fila:
-            dibujar_boton(boton,pantalla)    
-
-def actualizar_fondo_boton(boton):
-    if boton["Estado"]:
-        boton["Color Fondo"] = "Green"
-    else:
-        boton["Color Fondo"] = "Grey"
-
 def comprobar_colision_y_actualizar(lista_botones,evento):
     for boton in lista_botones:
         if boton["Rectangulo"].collidepoint(evento.pos) and boton["Acertado"] == False:
-            print(boton)
             boton["Estado"] = not boton["Estado"]
             actualizar_fondo_boton(boton)
-            print(boton["Contenido"])
-
 
 def actualizar_estado_botones(matriz_botones:list,evento):
     for fila in matriz_botones:
@@ -137,50 +111,137 @@ def actualizar_posicion_botones(matriz_botones,grupos_ordenados): #FUNCION MAL H
             matriz_botones[fila_objetivo][i]["Posicion"] = lista_posiciones_seleccionados[i]
             matriz_botones[fila_objetivo][i]["Rectangulo"].topleft = lista_posiciones_seleccionados[i]
 
-
-
 def actualizar_botones_acierto(matriz_botones):
     seleccionados = obtener_botones_seleccionados(matriz_botones)
-    resultado = False
-    if len(seleccionados) != 4:
-        return False
     print("correcto")
-    resultado = True
     for boton in seleccionados:
         boton["Color Fondo"] =  (0, 247, 255)
         boton["Acertado"] = True
-    return resultado
+    return matriz_botones
 
-def obtener_posiciones_sin_usar(matriz_botones,lista_posiciones):
-    set_posiciones = set(lista_posiciones)
+def obtener_posiciones_usadas(matriz_botones):
     set_pos_usadas = set()
     for fila in matriz_botones:
         for boton in fila:
             set_pos_usadas.add(boton["Posicion"])
+    return set_pos_usadas
+
+def obtener_posiciones_sin_usar(matriz_botones,lista_posiciones): #se devuelve la diferencia entre las posiciones que usa la matriz y todas las posiciones
+    set_posiciones = set(lista_posiciones)
+    set_pos_usadas = obtener_posiciones_usadas(matriz_botones)
 
     posiciones_libres = set_posiciones.difference(set_pos_usadas)
     lista_posiciones_libres = list(posiciones_libres)
     return lista_posiciones_libres
 
+def asignar_posicion_libre_fila(posiciones_libres,nuevas_posiciones_acierto,fila):
+    for boton in fila:
+        if contiene(nuevas_posiciones_acierto,boton["Posicion"]) and boton["Acertado"] == False:
+            boton["Posicion"] = posiciones_libres.pop(0) 
+    return posiciones_libres
 
-def reordenar_botones_acierto(matriz_botones,aciertos_previos):
-    botones_acierto = obtener_botones_seleccionados(matriz_botones)
-    lista_posiciones_seleccionados = []
-    for boton in botones_acierto:
-        lista_posiciones_seleccionados.append(boton["Posicion"])
-    lista_posiciones = obtener_lista_posiciones((60,60),(800,800),100)
+def asignar_posiciones_libres(matriz_botones,lista_posiciones,nuevas_posiciones_acierto): #si la posicion de algun elemento no acertado es igual a la de uno q si, se le asigna una ubicacion libre con pop
+    posiciones_libres = obtener_posiciones_sin_usar(matriz_botones,lista_posiciones)
+    for fila in matriz_botones:
+        posiciones_libres = asignar_posicion_libre_fila(posiciones_libres,nuevas_posiciones_acierto,fila)
+        print(posiciones_libres)
+    return matriz_botones
+
+def ordenar_botones_acertados(botones_acertados,lista_posiciones,aciertos_previos): #asigna las nuevas posiciones a los elementos correcto y devuelve esas posiciones tomadas en una lista
     nuevas_posiciones_acierto = []
-    for i,boton in enumerate(botones_acierto):
+    for i,boton in enumerate(botones_acertados):
         boton["Posicion"] = lista_posiciones[aciertos_previos * 4 + i]
         boton["Rectangulo"].topleft = boton["Posicion"]
         boton["Estado"] = False
         nuevas_posiciones_acierto.append(boton["Posicion"])
+    return nuevas_posiciones_acierto
+
+def reordenar_botones_acierto(matriz_botones,aciertos_previos,pantalla):
+
+    botones_acierto = obtener_botones_seleccionados(matriz_botones)
+    lista_posiciones_seleccionados = []
+    for boton in botones_acierto:
+        lista_posiciones_seleccionados.append(boton["Posicion"])
+    lista_posiciones = obtener_lista_posiciones((60,60),pantalla,100)
+
+    nuevas_posiciones_acierto = ordenar_botones_acertados(botones_acierto,lista_posiciones,aciertos_previos)
     
-    posiciones_libres = obtener_posiciones_sin_usar(matriz_botones,lista_posiciones)
+    matriz_botones = asignar_posiciones_libres(matriz_botones,lista_posiciones,nuevas_posiciones_acierto)
 
-    for fila in matriz_botones:
-        for boton in fila:
-            if contiene(nuevas_posiciones_acierto,boton["Posicion"]) and boton["Acertado"] == False:
-                boton["Posicion"] = posiciones_libres.pop(0)   
+    return matriz_botones
 
-    return True
+def pedir_nombre_en_pantalla(tamaño_pantalla,ventana_principal):
+    fuente = pygame.font.Font(None, 35)
+    entrada_usuario = ""
+    max_caracteres = 10
+    mi_rect = pygame.Rect(0, 0, 150, 40)
+    centro_pantalla = (tamaño_pantalla[0] // 2, tamaño_pantalla[1] // 2)
+    mi_rect.center = centro_pantalla
+    activar_entrada = False
+    resultado = False
+    while True:
+        ventana_principal.fill("Black")
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if mi_rect.collidepoint(event.pos):
+                    activar_entrada = True
+                else:
+                    activar_entrada = False
+            if event.type == pygame.KEYDOWN and activar_entrada:
+                if event.key == pygame.K_BACKSPACE:
+                    entrada_usuario = entrada_usuario[:-1]
+                elif event.key == pygame.K_RETURN:
+                    resultado = True 
+                elif event.key == pygame.K_ESCAPE:
+                    resultado = False
+                elif len(entrada_usuario) < max_caracteres:
+                    entrada_usuario += event.unicode
+
+        if resultado:
+            pygame.display.flip() 
+            return entrada_usuario       
+        
+        pygame.draw.rect(ventana_principal, (255, 255, 255), mi_rect)
+        
+        print_texto = fuente.render(entrada_usuario, True, "Black")
+        ventana_principal.blit(print_texto, (mi_rect.x + 5, mi_rect.y + 10))
+
+        mensaje_inicio = fuente.render("Ingresa tu nombre", True, "Black", "White")
+        rect_mensaje_inicio = mensaje_inicio.get_rect()
+        rect_mensaje_inicio.center = (tamaño_pantalla[0] // 2 , (tamaño_pantalla[1] // 2) - 60)
+        ventana_principal.blit(mensaje_inicio, rect_mensaje_inicio)
+        pygame.display.flip()
+
+def continuar_siguiente_nivel(tamaño_pantalla,ventana_principal,stats):
+    fuente = pygame.font.Font(None, 35)
+
+    centro_pantalla = (tamaño_pantalla[0] // 2, tamaño_pantalla[1] // 2)
+    boton_continuar = crear_boton(ventana_principal,centro_pantalla,(70,70),path_imagen="imagenes/siguiente nivel.png")
+    resultado = False
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if boton_continuar["Rectangulo"].collidepoint(event.pos):
+                    resultado = True                
+
+        if resultado:
+            pygame.display.flip() 
+            return        
+        
+        boton_continuar["Color Fondo"] = (98, 255, 89)
+        boton_continuar["Rectangulo"].center = boton_continuar["Posicion"]
+        dibujar_boton(boton_continuar,ventana_principal)
+        mensaje_inicio = fuente.render(f"Genial. Pasaste al nivel {stats["nivel"]}", True, "Black", "White")
+        rect_mensaje_inicio = mensaje_inicio.get_rect()
+        rect_mensaje_inicio.center = (tamaño_pantalla[0] // 2 , (tamaño_pantalla[1] // 2) - 60)
+        ventana_principal.blit(mensaje_inicio, rect_mensaje_inicio)
+        pygame.display.flip()  
+
+def mostrar_stats_fin_juego():
+    pass
