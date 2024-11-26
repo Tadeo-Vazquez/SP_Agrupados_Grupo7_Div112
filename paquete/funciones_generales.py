@@ -114,14 +114,18 @@ def pedir_nombre_user(minimo_len:int,maximo_len:int)->str:
         nombre_user = input("Ingrese su nombre de usuario: ")
     return nombre_user
 
+def mostrar_elemento_categoria(elemento_mostrar,fila,contador):
+    for columna in fila:
+        if contador == elemento_mostrar:
+            print(f"El elemento {columna[0]} es de la categoria {columna[1]}")
+        contador += 1
+
 def comodin_mostrar_categoria(matriz_juego:list,aciertos:int)->None:
     elemento_mostrar = random.randint(aciertos*4+1,16)
     contador = 1
     for fila in matriz_juego:
-        for columna in fila:
-            if contador == elemento_mostrar:
-                print(f"El elemento {columna[0]} es de la categoria {columna[1]}")
-            contador += 1
+        mostrar_elemento_categoria(elemento_mostrar,fila,contador)
+        contador += 4
 
 def comodin_emparejar_dos(matriz_juego:list, aciertos:int)->None:
     posicion_mostrar1 = random.randint(aciertos*4+1,16)
@@ -130,14 +134,15 @@ def comodin_emparejar_dos(matriz_juego:list, aciertos:int)->None:
         for columna in fila:
             if columna[1] == elemento1[1] and columna != elemento1:
                 elemento2 = columna
+
     print(f"'{elemento1[0]}' y '{elemento2[0]}' son parte del mismo grupo")
 
-def comodin_mostrar_elementos_1fila(matriz_juego:list,cant_segundos:int, aciertos:int)->None:
+def comodin_mostrar_elementos_1fila(matriz_juego:list, aciertos:int)->None:
     system("cls")
     for i in range(4):
         elemento_mostrar = obtener_elemento_segun_posicion(aciertos*4+i+1,matriz_juego)
         print(f"{elemento_mostrar[0]} es de la categoría {elemento_mostrar[1]}")
-    time.sleep(cant_segundos)
+    time.sleep(3)
     system("cls")
 
 def reasignacion_matriz_juego(matriz_usada:list,lista_secuencias:list,matriz_ordenada:list)->tuple:
@@ -147,27 +152,13 @@ def reasignacion_matriz_juego(matriz_usada:list,lista_secuencias:list,matriz_ord
     matriz_desordenada = crear_matriz_4x4_desordenada(matriz_ordenada)
     return secuencias,matriz_ordenada,matriz_desordenada
 
-def ejecutar_comodin(comodin:int,matriz_juego:list,stats:dict,comodines:list):
-    match comodin:
-        case 17:
-            if contiene(comodines,17):
-                comodin_mostrar_categoria(matriz_juego,stats["aciertos"])
-                comodines.remove(17)
-            else:
-                print("Comodín ya usado")
-        case 18:
-            if contiene(comodines,18):
-                comodin_emparejar_dos(matriz_juego,stats["aciertos"])
-                comodines.remove(18)
-            else:
-                print("Comodín ya usado")
-        case 19:
-            if contiene(comodines,19):
-                comodin_mostrar_elementos_1fila(matriz_juego,3,stats["aciertos"])
-                comodines.remove(19)
-            else:
-                print("Comodín ya usado")
-    return comodines
+def ejecutar_comodin(comodin,matriz_juego:list,stats:dict,comodines:dict): #refactorizado usando dicts con funciones como valores
+    posicion_comodin = comodin - 17
+    if comodines[posicion_comodin]["Usado"]:
+        print("Comodin ya usado")
+    else:
+        comodines[posicion_comodin]["Comodin"](matriz_juego,stats["aciertos"])
+        comodines[posicion_comodin]["Usado"] = True
 
 def paso_nivel(stats:dict):
     resultado = False
@@ -212,20 +203,31 @@ def manejar_errores(stats):
         print(f"{RED_TEXTO}Perdiste una vida. Te quedan {stats["vidas nivel"]}{RESET}")
     return resultado
 
+def inicializar_comodines():
+    comodines = [{},{},{}]
+    comodines[0]["Comodin"] = comodin_mostrar_categoria
+    comodines[0]["Usado"] = False
+    comodines[1]["Comodin"] = comodin_emparejar_dos
+    comodines[1]["Usado"] = False
+    comodines[2]["Comodin"] = comodin_mostrar_elementos_1fila
+    comodines[2]["Usado"] = False
+    return comodines
+
+
 def inicializar_juego() -> dict:
     flag_juego = True
-    comodines = [17, 18, 19]
+    comodines = inicializar_comodines()
     inicio_juego = time.time()
-    # nombre_user = pedir_nombre_en_pantalla(tamaño_pantalla,ventana_principal) #cambiar por funcion de pygame
+    nombre_user = pedir_nombre_user(3,15) #cambiar por funcion de pygame
     secuencias = convertir_csv_lista("secuencias.csv")
     matriz = cargar_matriz_ordenada(secuencias, 4)
     matriz_desordenada = crear_matriz_4x4_desordenada(matriz)
-    stats = crear_dict_stats()
+    stats = crear_dict_stats(nombre_user)
     return {
         "flag_juego": flag_juego,
         "comodines": comodines,
         "inicio_juego": inicio_juego,
-        # "nombre_user": nombre_user,
+        "nombre_user": nombre_user,
         "secuencias": secuencias,
         "matriz": matriz,
         "matriz_desordenada": matriz_desordenada,
