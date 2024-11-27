@@ -4,23 +4,18 @@ from os import system
 import pygame
 
 def jugar_agrupados()->None:
-    valores_juego = inicializar_juego()
-    matriz_desordenada,secuencias,matriz = valores_juego["matriz_desordenada"], valores_juego["secuencias"], valores_juego["matriz"]
+    valores_juego = inicializar_juego() #CREA UN DICT CON TODAS LAS ESTADISTICAS Y DATOS DEL JUEGO
+    matriz_desordenada,secuencias,matriz = valores_juego["matriz_desordenada"], valores_juego["secuencias"], valores_juego["matriz"] #DESEMPAQUETAMOS ESTOS DATOS DEL DICT POR LEGIBILIDAD
     while valores_juego["flag_juego"]:
-        imprimir_interfaz_matriz(matriz_desordenada,18,valores_juego["stats"]) #MOSTRAR LA MATRIZ DE ELEMENTOS
-        lista_posiciones,ejecuto_comodin = pedir_posiciones_y_ejecutar_comodin(valores_juego,matriz_desordenada)
-        if ejecuto_comodin:
+        imprimir_interfaz_matriz(matriz_desordenada,18,valores_juego["stats"]) #MUESTRA LA MATRIZ DEL JUEGO    
+        lista_posiciones,ejecuto_comodin = pedir_posiciones_y_ejecutar_comodin(valores_juego,matriz_desordenada) #PIDE 4 POSICIONES Y SI ALGUNA ES UN COMODIN, LO EJECUTA
+        if ejecuto_comodin: #SI SE EJECUTO UN COMODIN SE PASA AL SIGUIENTE BUCLE
             continue
-        lista_cat_ingresadas = averiguar_4categorias_ingresadas(matriz_desordenada,lista_posiciones) #crear una lista con las categorias correspondientes segun las 4 posiciones ingresadas
-        acierto = averiguar_coincidencia_4cat(lista_cat_ingresadas) #verifica si las 4 categorias coinciden (True) o si no (False)
-#############################################MANEJAR EL ACIERTO O ERROR###############################################################
-        if acierto:
-            matriz_desordenada,secuencias,matriz = ejecutar_acierto(secuencias,matriz,matriz_desordenada,valores_juego,lista_cat_ingresadas)
-        else:
-            secuencias,matriz,matriz_desordenada = ejecutar_error(valores_juego,secuencias,matriz,matriz_desordenada)
+        lista_cat_ingresadas = averiguar_4categorias_ingresadas(matriz_desordenada,lista_posiciones) #LISTA LAS CATEGORIAS INGRESADAS SEGUN LAS POSICIONES
+        acierto = averiguar_coincidencia_4cat(lista_cat_ingresadas) #COMPARA LAS CATEGORIAS Y DEVUELVE SI ACERTO
+        secuencias,matriz,matriz_desordenada = manejar_acierto_o_error(acierto,matriz_desordenada,secuencias,matriz,valores_juego,lista_cat_ingresadas) #REORDENA O CREA UNA MATRIZ NUEVA DEPENDIENDO LA CIRCUNSTANCIAS
         pausar_y_limpiar_terminal()
-###################################FIN DEL JUEGO. SACA PROMEDIO DE TIEMPO Y GUARDA DATOS EN JSON#######################################   
-    finalizar_juego(valores_juego)
+    finalizar_juego(valores_juego)#FIN DEL JUEGO. SACA PROMEDIO DE TIEMPO Y GUARDA DATOS EN JSON
 
 jugar_agrupados()
 

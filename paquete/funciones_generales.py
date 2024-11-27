@@ -319,3 +319,11 @@ def pedir_posiciones_y_ejecutar_comodin(valores_juego,matriz_desordenada):
         pausar_y_limpiar_terminal()
         ejecuto_comodin = True              
     return lista_posiciones,ejecuto_comodin
+
+def manejar_acierto_o_error(acierto,matriz_desordenada,secuencias,matriz,valores_juego,lista_cat_ingresadas):
+    if acierto:
+        matriz_desordenada,secuencias,matriz = ejecutar_acierto(secuencias,matriz,matriz_desordenada,valores_juego,lista_cat_ingresadas)
+    else:
+        secuencias,matriz,matriz_desordenada = ejecutar_error(valores_juego,secuencias,matriz,matriz_desordenada)
+
+    return secuencias,matriz,matriz_desordenada
