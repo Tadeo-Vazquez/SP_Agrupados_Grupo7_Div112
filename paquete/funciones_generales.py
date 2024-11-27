@@ -38,16 +38,20 @@ def crear_matriz_4x4_desordenada(matriz_secuencias_ordenadas:list)->list:
     matriz_desordenada = cargar_matriz_desordenada(matriz_desordenada,matriz_secuencias_ordenadas,16,4,4)
     return matriz_desordenada
 
-#modularizar de aca a abajo
+
+def agregar_categoria_ingresada(contador,lista_categorias_ingresadas,numeros_ingresados,fila):
+    for elemento in fila:        
+        contador += 1
+        if contiene(numeros_ingresados,contador):
+            lista_categorias_ingresadas.append(elemento[1])
+    return lista_categorias_ingresadas
 
 def averiguar_4categorias_ingresadas(matriz_juego:int,numeros_ingresados:list)->list:
     contador = 0
     lista_categorias_ingresadas = []
-    for i in range(len(matriz_juego)):
-        for j in range(len(matriz_juego[0])):
-            contador += 1
-            if contiene(numeros_ingresados,contador):
-                lista_categorias_ingresadas.append(matriz_juego[i][j][1])
+    for fila in matriz_juego:
+        lista_categorias_ingresadas = agregar_categoria_ingresada(contador,lista_categorias_ingresadas,numeros_ingresados,fila)
+        contador += 4
     return lista_categorias_ingresadas
 
 def averiguar_coincidencia_4cat(categorias_ingresadas:list)->bool:
@@ -57,68 +61,103 @@ def averiguar_coincidencia_4cat(categorias_ingresadas:list)->bool:
         coincidencia = False
     return coincidencia
     
+
+def pedir_posicion(lista_posiciones_int,minimo,maximo):
+    uso_comodin = False
+    posicion = get_number_int("Ingresa una posición del grupo: ",minimo,maximo)
+    while contiene(lista_posiciones_int,posicion):
+        print("Posición ya ingresada")
+        posicion = get_number_int("Ingresa una posición del grupo: ",minimo,maximo)
+    if posicion > 16:
+        uso_comodin = True
+    return posicion,uso_comodin
+
 def pedir_4_posiciones(minimo:int,maximo:int)->list:
     lista_posiciones_int = []
     posiciones_pedidas = 4
     for _ in range(posiciones_pedidas):
-        posicion = get_number_int("Ingresa una posición del grupo: ",minimo,maximo)
-        while contiene(lista_posiciones_int,posicion):
-            print("Posición ya ingresada")
-            posicion = get_number_int("Ingresa una posición del grupo: ",minimo,maximo)
-        if posicion > 16:
+        posicion,uso_comodin = pedir_posicion(lista_posiciones_int,minimo,maximo)
+        if uso_comodin:
             lista_posiciones_int = [posicion]
             break
         lista_posiciones_int.append(posicion)
     return lista_posiciones_int
 
+def mostrar_columna_matriz(columna,aciertos,numerador,espacios):
+    if aciertos > 0:
+        print(f"\033[1;36m[{numerador}]\033[0m \033[92m{columna[0]:{espacios}}\033[0m", end = "\t")
+    else:
+        print(f"\033[1;36m[{numerador}]\033[0m {columna[0]:{espacios}}", end = "\t")
+
+def mostrar_fila_matriz(fila,aciertos,numerador,espacios):
+    for columna in fila:
+        mostrar_columna_matriz(columna,aciertos,numerador,espacios)
+        numerador += 1
+
 def imprimir_interfaz_matriz(matriz:list,espacios:int,stats:dict):
     numerador = 1
     aciertos = stats["aciertos"]
     for fila in matriz:
-        for columna in fila:
-            if aciertos > 0:
-                print(f"\033[1;36m[{numerador}]\033[0m \033[92m{columna[0]:{espacios}}\033[0m", end = "\t")
-            else:
-                print(f"\033[1;36m[{numerador}]\033[0m {columna[0]:{espacios}}", end = "\t")
-            numerador += 1
+        mostrar_fila_matriz(fila,aciertos,numerador,espacios)
+        numerador += 4
         aciertos -= 1
         print()
     mostrar_comodines()
     mostrar_stats(stats,espacios)
 
 
+def intercambiar_elemento_acertado(matriz,categoría_acertada,ordenados,aciertos_previos,i,j):
+    if matriz[i][j][1] == categoría_acertada:
+        aux = matriz[aciertos_previos][ordenados]
+        matriz[aciertos_previos][ordenados] = matriz[i][j]
+        matriz[i][j] = aux
+        ordenados += 1
+    return matriz,ordenados
+
+def reordenar_fila_acierto(matriz,ordenados,categoría_acertada,aciertos_previos,i):
+    for j in range(len(matriz[0])):
+        matriz,ordenados = intercambiar_elemento_acertado(matriz,categoría_acertada,ordenados,aciertos_previos,i,j)
+    return matriz,ordenados
+
 def reordenar_acierto_matriz(matriz:list,aciertos_previos:int,categoría_acertada:str)->list:
-    elementos_ordenados = 0
+    ordenados = 0
     for i in range(len(matriz)):
-        for j in range(len(matriz[0])):
-            if matriz[i][j][1] == categoría_acertada:
-                aux = matriz[aciertos_previos][elementos_ordenados]
-                matriz[aciertos_previos][elementos_ordenados] = matriz[i][j]
-                matriz[i][j] = aux
-                elementos_ordenados += 1
+        matriz,ordenados = reordenar_fila_acierto(matriz,ordenados,categoría_acertada,aciertos_previos,i)
     return matriz
+
+
+def extraer_categorias_usadas_fila(fila,categorias_usadas):
+    for columna in fila:
+        if contiene(categorias_usadas,columna[1]) == False:
+            categorias_usadas.append(columna[1])
+    return categorias_usadas
 
 def extraer_4_categorias_usadas(matriz_usada:list)->list:
     categorias_usadas = []
     for fila in matriz_usada:
-        for columna in fila:
-            if contiene(categorias_usadas,columna[1]) == False:
-                categorias_usadas.append(columna[1])
+        categorias_usadas = extraer_categorias_usadas_fila(fila,categorias_usadas)
     return categorias_usadas
+
+
+def borrar_categoria_lista(categorias_usadas,secuencia,lista_secuencias):
+    for categoria in categorias_usadas:
+        if secuencia[0] == categoria:
+            lista_secuencias.remove(secuencia)
+    return lista_secuencias
 
 def borrar_4_categorias_lista(categorias_usadas:list,lista_secuencias:list)->list:
     for secuencia in lista_secuencias:
-        for categoria in categorias_usadas:
-            if secuencia[0] == categoria:
-                lista_secuencias.remove(secuencia)
+        lista_secuencias = borrar_categoria_lista(categorias_usadas,secuencia,lista_secuencias)
     return lista_secuencias
    
+
 def pedir_nombre_user(minimo_len:int,maximo_len:int)->str:
     nombre_user = input("Ingrese su nombre de usuario: ")
     while len(nombre_user) < minimo_len or len(nombre_user) > maximo_len:
         print("Longitud no permitida")
         nombre_user = input("Ingrese su nombre de usuario: ")
     return nombre_user
+
 
 def mostrar_elemento_categoria(elemento_mostrar,fila,contador):
     for columna in fila:
@@ -133,13 +172,21 @@ def comodin_mostrar_categoria(matriz_juego:list,aciertos:int)->None:
         mostrar_elemento_categoria(elemento_mostrar,fila,contador)
         contador += 4
 
+
+def buscar_emparejado_fila(fila,elemento1):
+    elemento2 = None
+    for columna in fila:
+        if columna[1] == elemento1[1] and columna != elemento1:
+            elemento2 = columna
+    return elemento2
+
 def comodin_emparejar_dos(matriz_juego:list, aciertos:int)->None:
     posicion_mostrar1 = random.randint(aciertos*4+1,16)
     elemento1 = obtener_elemento_segun_posicion(posicion_mostrar1,matriz_juego)
     for fila in matriz_juego:
-        for columna in fila:
-            if columna[1] == elemento1[1] and columna != elemento1:
-                elemento2 = columna
+        elemento2 = buscar_emparejado_fila(fila,elemento1)
+        if elemento2 != None:
+            break
 
     print(f"'{elemento1[0]}' y '{elemento2[0]}' son parte del mismo grupo")
 
@@ -172,34 +219,44 @@ def paso_nivel(stats:dict):
         resultado = True
     return resultado
 
+def verificar_paso_nivel(stats):
+    if stats["nivel"] == 5:
+        print("Has ganado el juego")
+        resultado = 2
+    else:
+        reasignacion_stats(True,stats)
+        print(f"Ganaste. Pasaste al nivel {stats['nivel']}")
+        resultado = 1
+    return resultado
+
 def manejar_aciertos(stats):
     reasignacion_stats(True,stats)
     print(GREEN_TEXTO + "Acertaste un grupo!" + RESET)
     resultado = 0
     if paso_nivel(stats):
-        resultado = 1
-        if stats["nivel"] == 5:
-            print("Has ganado el juego")
-            resultado = 2
-        else:
-            reasignacion_stats(True,stats)
-            print(f"Ganaste. Pasaste al nivel {stats['nivel']}")
+        resultado = verificar_paso_nivel(stats)
+    return resultado
+
+
+def verificar_derrota_nivel(stats):
+    print("Perdiste el nivel")
+    resultado = 1
+    if stats["reinicios"] == 0:
+        print("Perdiste el juego")
+        resultado = 2
+    reasignacion_stats(False,stats)
     return resultado
 
 def manejar_errores(stats):
     resultado = 0
     reasignacion_stats(False,stats)
     if stats["vidas nivel"] == 0:
-        print("Perdiste el nivel")
-        resultado = 1
-        if stats["reinicios"] == 0:
-            print("Perdiste el juego")
-            resultado = 2
-        reasignacion_stats(False,stats)
+        resultado = verificar_derrota_nivel(stats)
     else:
         print(f"{RED_TEXTO}Perdiste una vida. Te quedan {stats["vidas nivel"]}{RESET}")
     return resultado
 
+#modularizar de aca a abajo
 def inicializar_comodines():
     comodines = [{},{},{}]
     comodines[0]["Comodin"] = comodin_mostrar_categoria

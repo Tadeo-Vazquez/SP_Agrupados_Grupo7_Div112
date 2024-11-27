@@ -92,13 +92,21 @@ def crear_matriz(filas:int,columnas:int,valor_inicial:any=None)->list:
         matriz += [fila]
     return matriz
 
+def obtener_elemento_fila(fila,posicion,contador):
+    elemento = None
+    for columna in fila:
+        if contador == posicion:
+            elemento = columna
+        contador += 1
+    return elemento
+
 def obtener_elemento_segun_posicion(posicion:int, matriz_juego:list)->tuple:
     contador = 1
     for fila in matriz_juego:
-        for columna in fila:
-            if contador == posicion:
-                elemento = columna
-            contador += 1
+        elemento = obtener_elemento_fila(fila,posicion,contador)
+        if elemento != None:
+            break
+        contador += 4
     return elemento
 
 
