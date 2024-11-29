@@ -35,9 +35,9 @@ def obtener_lista_posiciones(tamaño_boton,tamaño_pantalla,espacio):
     return lista_posiciones
 
 def crear_matriz_botones(matriz_juego:list, pantalla, tamaño_pantalla:tuple) -> list:
-    ancho_boton = 60
-    alto_boton = 60
-    espacio = 100 # Espacio entre botones (la mitad del margen)
+    ancho_boton = 70
+    alto_boton = 70
+    espacio = 60 # Espacio entre botones (la mitad del margen)
     posiciones = obtener_lista_posiciones((ancho_boton,alto_boton),tamaño_pantalla,espacio)
     pos = 0
     matriz_botones = crear_matriz(4, 4, None)
@@ -94,7 +94,7 @@ def obtener_botones_seleccionados(matriz_botones):
     return botones_seleccionados
 
 def actualizar_posicion_botones(matriz_botones,grupos_ordenados): #FUNCION MAL HECHA REVISAR
-    lista_posiciones = obtener_lista_posiciones((60,60),(800,800),100)
+    lista_posiciones = obtener_lista_posiciones((70,70),(800,800),100)
     botones_seleccionados = obtener_botones_seleccionados(matriz_botones)
     lista_posiciones_seleccionados = []
     for boton in botones_seleccionados:
@@ -115,7 +115,7 @@ def actualizar_botones_acierto(matriz_botones):
     seleccionados = obtener_botones_seleccionados(matriz_botones)
     print("correcto")
     for boton in seleccionados:
-        boton["Color Fondo"] =  (0, 247, 255)
+        boton["Color Fondo"] =  (21, 255, 0)
         boton["Acertado"] = True
     return matriz_botones
 
@@ -162,7 +162,7 @@ def reordenar_botones_acierto(matriz_botones,aciertos_previos,pantalla):
     lista_posiciones_seleccionados = []
     for boton in botones_acierto:
         lista_posiciones_seleccionados.append(boton["Posicion"])
-    lista_posiciones = obtener_lista_posiciones((60,60),pantalla,100)
+    lista_posiciones = obtener_lista_posiciones((70,70),pantalla,60)
 
     nuevas_posiciones_acierto = ordenar_botones_acertados(botones_acierto,lista_posiciones,aciertos_previos)
     
@@ -233,7 +233,6 @@ def continuar_siguiente_nivel(tamaño_pantalla,ventana_principal,stats):
         if resultado:
             pygame.display.flip() 
             return        
-        
         boton_continuar["Color Fondo"] = (98, 255, 89)
         boton_continuar["Rectangulo"].center = boton_continuar["Posicion"]
         dibujar_boton(boton_continuar,ventana_principal)

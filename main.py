@@ -85,7 +85,9 @@ jugar_agrupados()
 
 #     if filas_ordenadas == 4:
 #         filas_ordenadas = 0
+#         print(secuencias)
 #         secuencias,matriz,matriz_desordenada = reasignacion_matriz_juego(matriz_desordenada,secuencias,matriz)
+#         print(secuencias)
 #         matriz_botones = crear_matriz_botones(matriz_desordenada,ventana_principal,PANTALLA)
 #         if stats["nivel"] == 5:
 #             mostrar_stats_fin_juego()

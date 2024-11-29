@@ -21,6 +21,6 @@ def mostrar_botones(matriz_botones,pantalla):
 
 def actualizar_fondo_boton(boton):
     if boton["Estado"]:
-        boton["Color Fondo"] = "Green"
+        boton["Color Fondo"] = (56, 255, 245)
     else:
         boton["Color Fondo"] = "Grey"
