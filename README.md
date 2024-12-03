@@ -10,7 +10,7 @@
 - **Comodines:** Usa herramientas estratégicas para avanzar:
   1. Descubre una categoría y un elemento.
   2. Empareja dos elementos automáticamente.
-  3. Descubre la categoría de 4 elementos... solo por 3 segundos!
+  3. Añade una vida extra a un nivel que se te dificulte!
 - **Progreso guardado:** Al finalizar, se almacena un archivo JSON con tu nombre, puntaje total, nivel alcanzado y promedio de tiempo entre niveles.
 
 ## 🎯 Objetivo
