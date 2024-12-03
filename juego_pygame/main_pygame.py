@@ -15,9 +15,8 @@ def main_juego():
     filas_ordenadas = 0
     #endregion
     mostrar_imagen("imagenes/fondo3.jpg",ventana_principal,PANTALLA,(0,0)) #mostrar por primera vez el fondo
-    ############################################ INICIO MAIN ############################################
+    dibujar_rectangulo(100,0,700,60,(108, 34, 255),ventana_principal)
     bucle_principal_juego(valores_juego,matriz_botones,secuencias,matriz,matriz_desordenada,filas_ordenadas,ventana_principal,PANTALLA,botones_musica)
     finalizar_juego(valores_juego)
-############################################ FIN MAIN ################################################
 
 main_juego()

@@ -30,6 +30,10 @@ def dibujar_boton_texto(boton_texto):
     pygame.draw.rect(boton_texto["Pantalla"],"Red",boton_texto["Rectangulo"])
     boton_texto["Pantalla"].blit(boton_texto["Superficie"],boton_texto["Rectangulo"])
 
+def dibujar_rectangulo(posX,posY,ancho,alto,color,ventana_principal):
+    rect = pygame.Rect(posX,posY,ancho,alto)
+    pygame.draw.rect(ventana_principal,color,rect)
+
 def reproducir_sonido(path_sonido,veces):
     pygame.mixer.init()
     sonido = pygame.mixer.Sound(path_sonido)

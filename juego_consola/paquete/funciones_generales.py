@@ -280,7 +280,6 @@ def inicializar_comodines():
     comodines[0] = crear_comodin(comodin_mostrar_categoria,"Mostrar categoría")
     comodines[1] = crear_comodin(comodin_emparejar_dos,"Emparejar 2")
     comodines[2] = crear_comodin(comodin_mostrar_elementos_1fila,"Mostrar elementos 1 fila")
-    print(comodines)
     return comodines
 
 

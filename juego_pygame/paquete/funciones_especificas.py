@@ -64,7 +64,6 @@ def encontrar_posicion_disponible_matriz_random(matriz:list,cant_filas:int,cant_
             return fila, columna
 
 def obtener_elemento_no_repetido(matriz_cargada:list, matriz_a_cargar:list)->tuple:
-    print(matriz_cargada)
     """obtiene un elemento random de una matriz cargada con para cargar en otra matriz verificando que no haya sido cargado ya
     Args:
         matriz_cargada (list): matriz de tuplas cargada
@@ -118,8 +117,13 @@ def guardar_stats_json(stats:dict,tiempo:float,path:str)->None:
     usuario["Puntaje"] = stats["puntaje"]
     usuario["Nivel Alcanzado"] = stats["nivel"]
     usuario["Tiempo Promedio por Nivel"] = tiempo
+    with open(path,"r") as archivo:
+        datos = json.load(archivo)
+    if type(datos) != list:
+        datos = [datos]
+    datos.append(usuario)
     with open(path,"w") as archivo:
-        json.dump(usuario,archivo,indent=4)
+        json.dump(datos,archivo,indent=4)
 
 def reasigna_stats_pasar_nivel(stats)->dict:
     stats["vidas nivel"] = 3

@@ -87,7 +87,7 @@ def comodin_mostrar_categoria(matriz_juego:list,stats,ventana_principal)->None:
     deseleccionar_botones(matriz_juego)
     boton_mostrar["Estado"] = True
     actualizar_fondo_boton(boton_mostrar)
-    mostrar_mensaje_pantalla(f"El elemento es de la categoria {boton_mostrar['Contenido'][1]}",(400,40),ventana_principal,"fuentes/letra_pintura.ttf",25)
+    mostrar_mensaje_pantalla(f"El elemento es de la categoria {boton_mostrar['Contenido'][1]}",(450,780),ventana_principal,"fuentes/letra_pintura.ttf",25)
     
 
 def seleccionar_elemento_segun_categoria(fila,categoria_mostrar,boton):

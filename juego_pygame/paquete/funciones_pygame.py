@@ -51,9 +51,9 @@ def crear_fila_botones(matriz_botones,i,pantalla,ancho_boton, alto_boton,posicio
     return matriz_botones
 
 def crear_matriz_botones(matriz_juego:list, pantalla, tamaño_pantalla:tuple) -> list:
-    ancho_boton = 70
-    alto_boton = 70
-    espacio = 60 # Espacio entre botones
+    ancho_boton = 100
+    alto_boton = 100
+    espacio = 50 # Espacio entre botones
     posiciones = obtener_lista_posiciones((ancho_boton,alto_boton),tamaño_pantalla,espacio)
     pos = 0
     matriz_botones = crear_matriz(4, 4, None)
@@ -73,8 +73,8 @@ def actualizar_posicion_fila_objetivo(matriz_botones,lista_posiciones_selecciona
         matriz_botones[fila_objetivo][i]["Posicion"] = lista_posiciones_seleccionados[i]
         matriz_botones[fila_objetivo][i]["Rectangulo"].topleft = lista_posiciones_seleccionados[i]
 
-def actualizar_posicion_botones(matriz_botones,grupos_ordenados): #FUNCION MAL HECHA REVISAR
-    lista_posiciones = obtener_lista_posiciones((70,70),(800,800),100)
+def actualizar_posicion_botones(matriz_botones,grupos_ordenados): 
+    lista_posiciones = obtener_lista_posiciones((100,100),(900,900),50)
     botones_seleccionados = obtener_botones_seleccionados(matriz_botones)
     lista_posiciones_seleccionados = []
     for boton in botones_seleccionados:
@@ -117,7 +117,7 @@ def reordenar_botones_acierto(matriz_botones,aciertos_previos,pantalla):
     lista_posiciones_seleccionados = []
     for boton in botones_acierto:
         lista_posiciones_seleccionados.append(boton["Posicion"])
-    lista_posiciones = obtener_lista_posiciones((70,70),pantalla,60)
+    lista_posiciones = obtener_lista_posiciones((100,100),pantalla,50)
     nuevas_posiciones_acierto = ordenar_botones_acertados(botones_acierto,lista_posiciones,aciertos_previos)
     matriz_botones = asignar_posiciones_libres(matriz_botones,lista_posiciones,nuevas_posiciones_acierto)
 
@@ -130,10 +130,11 @@ def verificar_acierto(matriz_botones):
     return resultado
 
 def agregar_botones_comodines(valores_juego,ventana_principal):
-    posY = 200
+    posY = 270
     for i,dict_comodin in enumerate(valores_juego["comodines"]):
-        comodin_boton = crear_boton(ventana_principal,(0,posY),(70,70),path_imagen=f"imagenes/{dict_comodin["Nombre"]}.png")
+        comodin_boton = crear_boton(ventana_principal,(30,posY),(70,70),path_imagen=f"imagenes/{dict_comodin["Nombre"]}.png")
         valores_juego["comodines"][i]["Boton"] = comodin_boton
+        valores_juego["comodines"][i]["Boton"]["Color Fondo"] = (136, 255, 231)
         posY += 150
     
     return valores_juego
@@ -161,6 +162,7 @@ def verificar_uso_comodin(ventana_principal,valores_juego,matriz_juego):
 def pasar_al_siguiente_nivel(stats,valores_juego,ventana_principal,PANTALLA,matriz_desordenada,secuencias,matriz):
     secuencias,matriz,matriz_desordenada = reasignacion_matriz_juego(matriz_desordenada,secuencias,matriz)
     matriz_botones = crear_matriz_botones(matriz_desordenada,ventana_principal,PANTALLA)
+    dibujar_rectangulo(100,0,700,60,(108, 34, 255),ventana_principal)
     if stats["nivel"] == 5:
         mensaje_pantalla_continuar(PANTALLA,ventana_principal,"Has ganado el juego!!!",(182, 255, 13),"imagenes/fondo3.jpg")
         valores_juego["flag_juego"] = False
@@ -174,6 +176,7 @@ def manejar_error(stats,ventana_principal,PANTALLA,matriz_desordenada,secuencias
     reasignacion_stats(False,stats)
     deseleccionar_botones(matriz_botones)
     reproducir_sonido("sonidos/incorrecto.wav",0)
+    dibujar_rectangulo(100,0,700,60,(108, 34, 255),ventana_principal)
     if stats["vidas nivel"] == 0:
         filas_ordenadas = 0
         reasignacion_stats(False,stats)
@@ -204,16 +207,17 @@ def mostrar_interfaz(valores_juego,ventana_principal,matriz_botones,botones_musi
     mostrar_botones(matriz_botones,ventana_principal)
     mostrar_botones_fila(botones_musica,ventana_principal)
 
-def mostrar_stat(stat,ruta_imagen,ventana_principal,altura):
-    posX = 640
+def mostrar_stat(stat,ruta_imagen,ventana_principal,posX):
+    posY = 10
     for _ in range(stat):
-        mostrar_imagen(ruta_imagen,ventana_principal,(40,40),(posX,altura))
+        mostrar_imagen(ruta_imagen,ventana_principal,(40,40),(posX,posY))
         posX += 40
 
 def mostrar_stats(stats,ventana_principal):
-    mostrar_mensaje_pantalla(f"{stats["puntaje"]} Pts",(710,200),ventana_principal,"fuentes/letra_pixelada2.ttf",20,(187, 255, 0))
-    mostrar_stat(stats["vidas nivel"],"imagenes/corazon_vida.png",ventana_principal,300)
-    mostrar_stat(stats["reinicios"], "imagenes/reinicio.png",ventana_principal,400)
+    mostrar_mensaje_pantalla(f"{stats["puntaje"]} Pts",(180,30),ventana_principal,"fuentes/letra_pixelada2.ttf",20,(187, 255, 0))
+    mostrar_stat(stats["vidas nivel"],"imagenes/corazon_vida.png",ventana_principal,280)
+    mostrar_stat(stats["reinicios"], "imagenes/reinicio.png",ventana_principal,460)
+    mostrar_mensaje_pantalla(f"Nivel {stats["nivel"]}",(690,30),ventana_principal,"fuentes/letra_pixelada2.ttf",20,(187, 255, 0))
 
 def manejar_acierto_o_error(acierto,stats,valores_juego,ventana_principal,PANTALLA,matriz_desordenada,secuencias,matriz,matriz_botones,filas_ordenadas):
     if acierto:
@@ -227,7 +231,7 @@ def manejar_acierto_o_error(acierto,stats,valores_juego,ventana_principal,PANTAL
     return matriz_botones,secuencias,matriz,matriz_desordenada,filas_ordenadas
 
 def inicializar_ventana():
-    PANTALLA = 800,800
+    PANTALLA = 900,900
     pygame.init()
     ventana_principal = pygame.display.set_mode(PANTALLA)
     pygame.display.set_caption("Juego prueba")
@@ -245,6 +249,7 @@ def manejar_eventos(valores_juego,matriz_botones,botones_musica):
 
 def bucle_principal_juego(valores_juego,matriz_botones,secuencias,matriz,matriz_desordenada,filas_ordenadas,ventana_principal,PANTALLA,botones_musica):
     while valores_juego["flag_juego"]:
+        dibujar_rectangulo(100,0,700,60,(108, 34, 255),ventana_principal)
         manejar_eventos(valores_juego,matriz_botones,botones_musica)
         # verificar_seleccion_correcta_y_actualizar
         acierto = verificar_acierto(matriz_botones)
@@ -254,9 +259,9 @@ def bucle_principal_juego(valores_juego,matriz_botones,secuencias,matriz,matriz_
         pygame.display.update()
 
 def crear_botones_sonido(pantalla):
-    boton_subir_volumen = crear_boton(pantalla,(640,760),(40,40),path_imagen="imagenes/subir_volumen.png",accion=subir_volumen)
-    boton_bajar_volumen = crear_boton(pantalla,(680,760),(40,40),path_imagen="imagenes/bajar_volumen.png",accion=bajar_volumen)
-    boton_mutear = crear_boton(pantalla,(720,760),(40,40),path_imagen="imagenes/mutear_volumen.png",accion=mutear_volumen)
-    boton_desmutear = crear_boton(pantalla,(760,760),(40,40),path_imagen="imagenes/desmutear_volumen.png",accion=desmutear_volumen)
+    boton_subir_volumen = crear_boton(pantalla,(740,860),(40,40),path_imagen="imagenes/subir_volumen.png",accion=subir_volumen)
+    boton_bajar_volumen = crear_boton(pantalla,(780,860),(40,40),path_imagen="imagenes/bajar_volumen.png",accion=bajar_volumen)
+    boton_mutear = crear_boton(pantalla,(820,860),(40,40),path_imagen="imagenes/mutear_volumen.png",accion=mutear_volumen)
+    boton_desmutear = crear_boton(pantalla,(860,860),(40,40),path_imagen="imagenes/desmutear_volumen.png",accion=desmutear_volumen)
 
     return [boton_subir_volumen,boton_bajar_volumen,boton_mutear,boton_desmutear]
