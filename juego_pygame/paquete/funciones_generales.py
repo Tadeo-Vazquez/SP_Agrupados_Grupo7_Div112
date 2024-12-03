@@ -127,7 +127,6 @@ def seleccionar_elemento_segun_posicion(matriz_juego,posicion_mostrar1):
             actualizar_fondo_boton(boton)
             break
         contador += 4
-    print(f"boton 1 {boton}")
     return boton
 
 def comodin_emparejar_dos(matriz_juego:list, stats:int,ventana_principal)->None:
@@ -144,15 +143,6 @@ def comodin_emparejar_dos(matriz_juego:list, stats:int,ventana_principal)->None:
 def comodin_vida_extra(matriz_juego,stats,ventana_principal):
     stats["vidas nivel"] += 1
 
-
-def ejecutar_comodin(matriz_juego:list,stats:dict,comodines:dict): #refactorizado usando dicts con funciones como valores
-    for comodin in comodines:
-        if comodin["Usado"] and comodin["Seleccionado"]:
-            print("Comodin ya usado")
-        elif comodin["Usado"] == False and comodin["Seleccionado"]:
-            comodin["Comodin"](matriz_juego,stats["aciertos"])
-            comodin["Usado"] = True
-
 def crear_comodin(accion,nombre):
     comodin = {}
     comodin["Comodin"] = accion
@@ -166,7 +156,6 @@ def inicializar_comodines():
     comodines[0] = crear_comodin(comodin_mostrar_categoria,"Mostrar categoría")
     comodines[1] = crear_comodin(comodin_emparejar_dos,"Emparejar 2")
     comodines[2] = crear_comodin(comodin_vida_extra,"Vida extra")
-    print(comodines)
     return comodines
 
 

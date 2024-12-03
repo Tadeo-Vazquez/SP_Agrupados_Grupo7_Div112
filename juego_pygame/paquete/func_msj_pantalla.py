@@ -63,6 +63,3 @@ def mostrar_mensaje_pantalla(texto,posicion,ventana_principal,ruta_fuente,tamañ
     texto_superficie = fuente.render(texto, False, color_letra,color_fondo)
     texto_rect = texto_superficie.get_rect(center=posicion)
     ventana_principal.blit(texto_superficie,texto_rect)
-
-def mostrar_stats_fin_juego():
-    pass

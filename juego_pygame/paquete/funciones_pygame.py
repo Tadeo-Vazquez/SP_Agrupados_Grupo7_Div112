@@ -5,7 +5,7 @@ from paquete.funciones_generales import *
 from paquete.funciones_especificas import *
 from paquete.func_msj_pantalla import *
 
-def inicializar_juego(tamaño_pantalla,ventana_principal) -> dict:
+def inicializar_juego(tamaño_pantalla:tuple,ventana_principal) -> dict:
     flag_juego = True
     comodines = inicializar_comodines()
     inicio_juego = time.time()
@@ -25,14 +25,14 @@ def inicializar_juego(tamaño_pantalla,ventana_principal) -> dict:
         "stats": stats
     }
 
-def obtener_posiciones_fila(i,inicio_X,inicio_Y,tamaño_boton,espacio,lista_posiciones):
+def obtener_posiciones_fila(i:int,inicio_X:int,inicio_Y:int,tamaño_boton:tuple,espacio:int,lista_posiciones:list):
     for j in range(4):
         posX = inicio_X + j * (tamaño_boton[0] + espacio)
         posY = inicio_Y + i * (tamaño_boton[1] + espacio) 
         lista_posiciones.append((posX,posY))
     return lista_posiciones
 
-def obtener_lista_posiciones(tamaño_boton,tamaño_pantalla,espacio):
+def obtener_lista_posiciones(tamaño_boton:tuple,tamaño_pantalla:tuple,espacio:int):
     lista_posiciones = []
     total_boton_ancho = 4 * tamaño_boton[0] + 3 * espacio  # 4 botones + 3 espacios entre ellos
     total_boton_alto = 4 * tamaño_boton[1] + 3 * espacio
@@ -53,7 +53,7 @@ def crear_fila_botones(matriz_botones,i,pantalla,ancho_boton, alto_boton,posicio
 def crear_matriz_botones(matriz_juego:list, pantalla, tamaño_pantalla:tuple) -> list:
     ancho_boton = 70
     alto_boton = 70
-    espacio = 60 # Espacio entre botones (la mitad del margen)
+    espacio = 60 # Espacio entre botones
     posiciones = obtener_lista_posiciones((ancho_boton,alto_boton),tamaño_pantalla,espacio)
     pos = 0
     matriz_botones = crear_matriz(4, 4, None)
@@ -147,7 +147,7 @@ def seleccionar_comodines(valores_juego,evento):
         if comodin["Boton"]["Rectangulo"].collidepoint(evento.pos):
             comodin["Seleccionado"] = True
 
-def verificar_uso_comodin(ventana_principal,valores_juego,matriz_juego,tamaño_pantalla):
+def verificar_uso_comodin(ventana_principal,valores_juego,matriz_juego):
     for comodin in valores_juego["comodines"]:
         if comodin["Seleccionado"] and comodin["Usado"] == False:
             comodin["Usado"] = True
@@ -250,7 +250,7 @@ def bucle_principal_juego(valores_juego,matriz_botones,secuencias,matriz,matriz_
         acierto = verificar_acierto(matriz_botones)
         matriz_botones,secuencias,matriz,matriz_desordenada,filas_ordenadas = manejar_acierto_o_error(acierto,valores_juego["stats"],valores_juego,ventana_principal,PANTALLA,matriz_desordenada,secuencias,matriz,matriz_botones,filas_ordenadas)
         mostrar_interfaz(valores_juego,ventana_principal,matriz_botones,botones_musica)
-        verificar_uso_comodin(ventana_principal,valores_juego,matriz_botones,PANTALLA)
+        verificar_uso_comodin(ventana_principal,valores_juego,matriz_botones)
         pygame.display.update()
 
 def crear_botones_sonido(pantalla):

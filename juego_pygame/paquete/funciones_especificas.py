@@ -64,7 +64,8 @@ def encontrar_posicion_disponible_matriz_random(matriz:list,cant_filas:int,cant_
             return fila, columna
 
 def obtener_elemento_no_repetido(matriz_cargada:list, matriz_a_cargar:list)->tuple:
-    """obtiene un elemento random de una matriz cargada con tuplas para cargar en otra matriz verificando que no haya sido cargado ya
+    print(matriz_cargada)
+    """obtiene un elemento random de una matriz cargada con para cargar en otra matriz verificando que no haya sido cargado ya
     Args:
         matriz_cargada (list): matriz de tuplas cargada
         matriz_a_cargar (list): matriz donde se quiere cargar el elemento de la primera matriz

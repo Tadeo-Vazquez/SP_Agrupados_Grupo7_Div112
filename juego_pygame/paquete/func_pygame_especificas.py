@@ -138,7 +138,6 @@ def obtener_botones_seleccionados(matriz_botones):
 
 def actualizar_botones_acierto(matriz_botones):
     seleccionados = obtener_botones_seleccionados(matriz_botones)
-    print("correcto")
     for boton in seleccionados:
         boton["Color Fondo"] =  (21, 255, 0)
         boton["Acertado"] = True
