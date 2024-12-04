@@ -3,6 +3,10 @@ import pygame
 
 
 def crear_boton(pantalla, posicion, dimension, texto=None, fuente=None, path_imagen=None,accion = None):
+    """
+    Crea el "objeto" boton en un diccionario con sus diferentes atributos
+    Se retorna el diccionario con los diferentes atributos del boton
+    """
     boton = {}
     boton["Pantalla"] = pantalla
     boton["Posicion"] = posicion
@@ -79,6 +83,14 @@ def actualizar_fondo_boton(boton):
         boton["Color Fondo"] = "Grey"
 
 def mostrar_imagen(ruta_imagen, ventana_principal, tamaño,posicion):
+    """
+    Muestra una imagen de fondo
+    Args:
+        ruta_imagen(str): path de la imagen
+        ventana_principal: superficie donde se blitea la imagen
+        tamaño(tuple): dimensiones
+        posicion(tuple): posicion en la superficie
+    """
     imagen = pygame.image.load(ruta_imagen)
     imagen = pygame.transform.scale(imagen,tamaño)  # Escalar la imagen al tamaño deseado
     ventana_principal.blit(imagen, posicion)  # Dibujar la imagen en la ventana

@@ -5,11 +5,18 @@ from paquete.funciones_generales import *
 from paquete.funciones_especificas import *
 from paquete.func_msj_pantalla import *
 
-def inicializar_juego(tamaño_pantalla:tuple,ventana_principal) -> dict:
+def inicializar_juego(dimensiones_pantalla:tuple,ventana_principal) -> dict:
+    """
+    Se crean los elementos y datos necesarios para el funcionamiento del Juego
+    Args:
+        dimensiones_pantalla(tuple): las dimensiones de la pantalla (ancho,alto)
+        ventana_principal: la pantalla que se utiliza
+    Retorna un diccionarios de datos para el funcionamiento del juego
+    """
     flag_juego = True
     comodines = inicializar_comodines()
     inicio_juego = time.time()
-    nombre_user = pedir_nombre_en_pantalla(tamaño_pantalla,ventana_principal) #cambiar por funcion de pygame
+    nombre_user = pedir_nombre_en_pantalla(dimensiones_pantalla,ventana_principal) #cambiar por funcion de pygame
     secuencias = convertir_csv_lista("secuencias.csv")
     matriz = cargar_matriz_ordenada(secuencias, 4)
     matriz_desordenada = crear_matriz_4x4_desordenada(matriz)
@@ -26,6 +33,17 @@ def inicializar_juego(tamaño_pantalla:tuple,ventana_principal) -> dict:
     }
 
 def obtener_posiciones_fila(i:int,inicio_X:int,inicio_Y:int,tamaño_boton:tuple,espacio:int,lista_posiciones:list):
+    """
+    Obtiene las posiciones iniciales de cada boton de una fila 
+    Args:
+        i(int): numero de fila 
+        inicio_X(int): posicion x de inicio 
+        inicio_Y(int): posicion y de inicio
+        tamaño_boton(tuple): tupla con el ancho y el largo del boton
+        espacio(int): espacio entre botones
+        lista_posiciones(list): lista donde se van a agregar tuplas con las coordenadas de las posiciones
+    Retorna una lista de tuplas que contienen las coordenadas de las posiciones de los botones de una fila
+    """
     for j in range(4):
         posX = inicio_X + j * (tamaño_boton[0] + espacio)
         posY = inicio_Y + i * (tamaño_boton[1] + espacio) 
@@ -33,6 +51,14 @@ def obtener_posiciones_fila(i:int,inicio_X:int,inicio_Y:int,tamaño_boton:tuple,
     return lista_posiciones
 
 def obtener_lista_posiciones(tamaño_boton:tuple,tamaño_pantalla:tuple,espacio:int):
+    """
+    Obtiene las posiciones iniciales de cada boton para una matriz 4x4
+    Args:
+        tamaño_boton(tuple): tupla con las dimensiones de un boton 
+        tamaño_pantalla(tuple): tupla con las dimensiones de la pantalla
+        espacio(int): espacio entre botones
+    Retorna una lista de tuplas que contienen las coordenadas de las posiciones de los botones de toda una matriz 4x4
+    """
     lista_posiciones = []
     total_boton_ancho = 4 * tamaño_boton[0] + 3 * espacio  # 4 botones + 3 espacios entre ellos
     total_boton_alto = 4 * tamaño_boton[1] + 3 * espacio
@@ -43,6 +69,18 @@ def obtener_lista_posiciones(tamaño_boton:tuple,tamaño_pantalla:tuple,espacio:
     return lista_posiciones
 
 def crear_fila_botones(matriz_botones,i,pantalla,ancho_boton, alto_boton,posiciones,pos,matriz_juego):
+    """
+    Crea los botones de una "i" fila de una matriz recibida
+    Args:
+        matriz_botones(list): matriz a donde se van a agregar los botones
+        i(int): numero de fila
+        pantalla: la ventana_principal que se utiliza
+        ancho_boton(int): ancho del boton
+        alto_boton(int): alto del boton
+        posiciones(tuple): coordenadas de posicion
+        pos(int): contador de posiciones
+        matriz_juego: matriz con las tuplas de secuencia del juego
+    """
     for j in range(len(matriz_botones[i])):
         # Crear el botón (esto depende de cómo implementes crear_boton)
         matriz_botones[i][j] = crear_boton(pantalla, posiciones[pos], (ancho_boton, alto_boton), path_imagen=f"imagenes/{matriz_juego[i][j][1]}/{matriz_juego[i][j][0]}.png")
@@ -50,11 +88,19 @@ def crear_fila_botones(matriz_botones,i,pantalla,ancho_boton, alto_boton,posicio
         pos += 1
     return matriz_botones
 
-def crear_matriz_botones(matriz_juego:list, pantalla, tamaño_pantalla:tuple) -> list:
+def crear_matriz_botones(matriz_juego:list, pantalla, dimensiones_pantalla:tuple) -> list:
+    """
+    Crear una matriz de dicionarios donde cada uno representa un "objeto" boton
+    Args:
+        matriz_juego(list): lista de tuplas de secuencias
+        pantalla: ventana_principal
+        dimensiones_pantalla(tuple): tupla con dimensiones de la pantalla (ancho, alto)
+    Retorna una matriz de diccionarios donde cada uno representa un "objeto" boton
+    """
     ancho_boton = 100
     alto_boton = 100
     espacio = 50 # Espacio entre botones
-    posiciones = obtener_lista_posiciones((ancho_boton,alto_boton),tamaño_pantalla,espacio)
+    posiciones = obtener_lista_posiciones((ancho_boton,alto_boton),dimensiones_pantalla,espacio)
     pos = 0
     matriz_botones = crear_matriz(4, 4, None)
     for i in range(len(matriz_botones)):
@@ -130,9 +176,15 @@ def verificar_acierto(matriz_botones):
     return resultado
 
 def agregar_botones_comodines(valores_juego,ventana_principal):
+    """
+    Se agregan los "objetos" boton a cada comodin del diccionario ingresado(en este caso el diccionario principal valores_juego)
+    Args:
+        valores_juego(dict): diccionario con todos los valores del juego para que funcione 
+        ventana_principal: la pantalla que se utiliza
+    """
     posY = 270
     for i,dict_comodin in enumerate(valores_juego["comodines"]):
-        comodin_boton = crear_boton(ventana_principal,(30,posY),(70,70),path_imagen=f"imagenes/{dict_comodin["Nombre"]}.png")
+        comodin_boton = crear_boton(ventana_principal,(30, posY), (70, 70), path_imagen=f"imagenes/{dict_comodin["Nombre"]}.png")
         valores_juego["comodines"][i]["Boton"] = comodin_boton
         valores_juego["comodines"][i]["Boton"]["Color Fondo"] = (136, 255, 231)
         posY += 150
@@ -231,6 +283,10 @@ def manejar_acierto_o_error(acierto,stats,valores_juego,ventana_principal,PANTAL
     return matriz_botones,secuencias,matriz,matriz_desordenada,filas_ordenadas
 
 def inicializar_ventana():
+    """
+    Se inicializa pygame junto a la pantalla con su fondo y titulo
+    Se retorna las dimensiones de una pantalla y la pantalla
+    """
     PANTALLA = 900,900
     pygame.init()
     ventana_principal = pygame.display.set_mode(PANTALLA)

@@ -110,7 +110,6 @@ def obtener_elemento_segun_posicion(posicion:int, matriz_juego:list)->tuple:
         contador += 4
     return elemento
 
-
 def guardar_stats_json(stats:dict,tiempo:float,path:str)->None:
     usuario = {}
     usuario["Nombre Usuario"] = stats["nombre usuario"]
@@ -171,6 +170,12 @@ def reasignacion_stats(acierto:bool,stats:dict)->dict: #sin usar: acortar codigo
     return stats
 
 def crear_dict_stats(nombre_user)->dict:
+    """
+    Crea el objeto "stats" como diccionario con las estadisticas de la partida del jugador como atributos
+    Args:
+        nombre_user(str): Nombre del usuario
+    Retorna un diccionario con las estadisticas del jugador durante la partida
+    """
     stats = {}
     stats["nombre usuario"] = nombre_user
     stats["puntaje"] = 0

@@ -148,5 +148,11 @@
         "Puntaje": -28,
         "Nivel Alcanzado": 2,
         "Tiempo Promedio por Nivel": 12
+    },
+    {
+        "Nombre Usuario": "asdfsad",
+        "Puntaje": 400,
+        "Nivel Alcanzado": 5,
+        "Tiempo Promedio por Nivel": 17
     }
 ]

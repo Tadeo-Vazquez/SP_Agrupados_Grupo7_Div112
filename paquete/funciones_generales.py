@@ -11,12 +11,26 @@ def mostrar_mensaje_pantalla(texto,posicion,ventana_principal,ruta_fuente,tamañ
     ventana_principal.blit(texto_superficie,texto_rect)
 
 def obtener_elemento_para_cargar(secuencias,matriz_secuencias_ordenadas):
-    secuencia_agregar = secuencias[random.randint(0,len(secuencias)-1)]
+    """
+    Carga una secuencia al azar no repetida
+    Args:
+        secuencias(list): lista de secuencias del csv
+        matriz_secuencias_ordenadas(list): matriz que contendra las secuencias para el juego
+    Retorna una matriz sin secuencias repetidas
+    """
+    secuencia_agregar = secuencias[random.randint(0, len(secuencias) - 1)]
     while contiene(matriz_secuencias_ordenadas,secuencia_agregar):
-        secuencia_agregar = secuencias[random.randint(0,len(secuencias)-1)]
+        secuencia_agregar = secuencias[random.randint(0, len(secuencias) - 1)]
     return secuencia_agregar
 
 def cargar_matriz_ordenada(secuencias:list,cantidad_secuencias:int)->list:
+    """
+    Carga una matriz con las secuencias a utilizar en el juego
+    Args:
+        secuencias(list): lista de secuencias del scv
+        cantidad_secuencias(int): numero de secuencias en la matriz
+    Retorna una matriz ordenada de las secuencias que se van a utilizar en el juego
+    """
     matriz_secuencias_ordenadas = []
     for _ in range(cantidad_secuencias):
         secuencia_agregar = obtener_elemento_para_cargar(secuencias,matriz_secuencias_ordenadas)
@@ -24,6 +38,10 @@ def cargar_matriz_ordenada(secuencias:list,cantidad_secuencias:int)->list:
     return matriz_secuencias_ordenadas
 
 def cargar_matriz_desordenada(matriz_a_cargar:list,matriz_ordenada_origen:list,cantidad_elementos:int,cant_filas:int,cant_columnas:int)->list:
+    """
+    Carga con tuplas (elemento, categoria) a una matriz de manera desordenada y sin repetirse
+    Retorna una matriz de tuplas
+    """
     for _ in range(cantidad_elementos):
         elemento_agregar = obtener_elemento_no_repetido(matriz_ordenada_origen,matriz_a_cargar)
         fila,columna = encontrar_posicion_disponible_matriz_random(matriz_a_cargar,cant_filas,cant_columnas)
@@ -31,8 +49,14 @@ def cargar_matriz_desordenada(matriz_a_cargar:list,matriz_ordenada_origen:list,c
     return matriz_a_cargar
 
 def crear_matriz_4x4_desordenada(matriz_secuencias_ordenadas:list)->list:
-    matriz_desordenada = crear_matriz(4,4)
-    matriz_desordenada = cargar_matriz_desordenada(matriz_desordenada,matriz_secuencias_ordenadas,16,4,4)
+    """
+    Crea una matriz 4x4 con secuencias desordenadas
+    Arg:
+        matriz_secuencias_ordenadas(list): lista con listas de las secuencias
+    Retorna la matriz desordenada con elementos de las secuencias
+    """
+    matriz_desordenada = crear_matriz(4, 4)
+    matriz_desordenada = cargar_matriz_desordenada(matriz_desordenada, matriz_secuencias_ordenadas, 16, 4, 4)
     return matriz_desordenada
 
 def extraer_categorias_usadas_fila(fila,categorias_usadas):
@@ -144,6 +168,13 @@ def comodin_vida_extra(matriz_juego,stats,ventana_principal):
     stats["vidas nivel"] += 1
 
 def crear_comodin(accion,nombre):
+    """
+    Crea el "objeto" comodin como diccionario con sus diferentes atributos
+    Args:
+        accion(funcion): funcion que realiza una accion
+        nombre(str): nombre del comodin
+    Se retorna el diccionario del "objeto"
+    """
     comodin = {}
     comodin["Comodin"] = accion
     comodin["Usado"] = False
@@ -152,11 +183,12 @@ def crear_comodin(accion,nombre):
     return comodin
 
 def inicializar_comodines():
+    """
+    Crea los comodines que se van a utilizar en el juego
+    Se retorna una lista con los diferentes diccionarios de comodines
+    """
     comodines = [{},{},{}]
     comodines[0] = crear_comodin(comodin_mostrar_categoria,"Mostrar categoría")
     comodines[1] = crear_comodin(comodin_emparejar_dos,"Emparejar 2")
     comodines[2] = crear_comodin(comodin_vida_extra,"Vida extra")
     return comodines
-
-
-
