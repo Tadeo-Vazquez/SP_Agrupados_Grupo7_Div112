@@ -125,6 +125,11 @@ def guardar_stats_json(stats:dict,tiempo:float,path:str)->None:
         json.dump(datos,archivo,indent=4)
 
 def reasigna_stats_pasar_nivel(stats)->dict:
+    """
+    Reasigna valores luego de pasar de nivel
+    Args:
+        stats(dict): diccionario de estadisticas
+    """
     stats["vidas nivel"] = 3
     stats["nivel"] += 1
     stats["puntaje"] += 20
@@ -132,23 +137,38 @@ def reasigna_stats_pasar_nivel(stats)->dict:
     return stats
 
 def reasignar_stats_acierto(stats):
+    """
+    Agrega puntaje por acierto y se aumenta la cantidad de aciertos
+    Args:
+        stats(dict): diccionaio de estadisticas
+    """
     stats["aciertos"] += 1
     stats["puntaje"] += 16
     return stats
     
 def reasignar_stats_error(stats):
+    """
+    Resta puntons y vidas si se comete un error 
+    Args:
+        stats(dict): diccionario de estadisticas
+    """
     stats["vidas nivel"] -= 1
     stats["puntaje"] -= 8
     return stats
 
 def reasignar_stats_perdida(stats):
+    """
+    Resigna valores luego de perder un nivel
+    Args:
+        stats(dict): diccionario de estadisticas
+    """
     stats["vidas nivel"] = 3
     stats["reinicios"] -= 1
     stats["aciertos"] = 0 
     return stats
 
 def reasignacion_stats(acierto:bool,stats:dict)->dict: #sin usar: acortar codigo main
-    """segun si acertó y la cantidad de aciertos o si falló y las vidas, reasigna las stats
+    """Segun si acertó y la cantidad de aciertos o si falló y las vidas, reasigna las stats
     Args:
         acierto (bool): 
         vidas_nivel (int): 

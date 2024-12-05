@@ -11,7 +11,7 @@ def inicializar_juego(dimensiones_pantalla:tuple,ventana_principal) -> dict:
     Args:
         dimensiones_pantalla(tuple): las dimensiones de la pantalla (ancho,alto)
         ventana_principal: la pantalla que se utiliza
-    Retorna un diccionarios de datos para el funcionamiento del juego
+    Retorna un diccionario de datos para el funcionamiento del juego
     """
     flag_juego = True
     comodines = inicializar_comodines()
@@ -80,6 +80,7 @@ def crear_fila_botones(matriz_botones,i,pantalla,ancho_boton, alto_boton,posicio
         posiciones(tuple): coordenadas de posicion
         pos(int): contador de posiciones
         matriz_juego: matriz con las tuplas de secuencia del juego
+    Retorna una matriz con una fila transformada a diccionarios que representan un "objeto" boton
     """
     for j in range(len(matriz_botones[i])):
         # Crear el botón (esto depende de cómo implementes crear_boton)
@@ -131,6 +132,13 @@ def actualizar_posicion_botones(matriz_botones,grupos_ordenados):
         actualizar_posicion_fila_objetivo(matriz_botones,lista_posiciones_seleccionados,fila_objetivo)
 
 def obtener_posiciones_sin_usar(matriz_botones,lista_posiciones): #se devuelve la diferencia entre las posiciones que usa la matriz y todas las posiciones
+    """
+    Compara un set de posiciones todas las posiciones con un set de posiciones ya usadas y quedan las posiciones libres 
+    Args:
+        matriz_botones(list): matriz que contiene botones
+        lista_posiciones(list): lista con todas las posiciones 
+    Retorna una lista con las posiciones donde no hay botones
+    """
     set_posiciones = set(lista_posiciones)
     set_pos_usadas = obtener_posiciones_usadas(matriz_botones)
     posiciones_libres = set_posiciones.difference(set_pos_usadas)
@@ -138,18 +146,40 @@ def obtener_posiciones_sin_usar(matriz_botones,lista_posiciones): #se devuelve l
     return lista_posiciones_libres
 
 def asignar_posicion_libre_fila(posiciones_libres,nuevas_posiciones_acierto,fila):
+    """
+    Asigna nuevas posiciones a los botones no acertados que estan dentro de la fila de acertados
+    Args:
+        posiciones_libres(list): lista de tuplas de posiciones libres 
+        nuevas_posiciones_acierto(list): posiciones para la nueva fila de aciertos 
+        fila(list): fila de botones
+    """
     for boton in fila:
         if contiene(nuevas_posiciones_acierto,boton["Posicion"]) and boton["Acertado"] == False:
             boton["Posicion"] = posiciones_libres.pop(0) 
     return posiciones_libres
 
 def asignar_posiciones_libres(matriz_botones,lista_posiciones,nuevas_posiciones_acierto): #si la posicion de algun elemento no acertado es igual a la de uno q si, se le asigna una ubicacion libre con pop
+    """
+    Asigna nuevas posiciones a los botones no acertados que estan dentro de la fila de acertados de una matriz
+    Args:
+        matriz_botones(list): matriz que contiene botones 
+        lista_posiciones(list): lista con todas las posiciones
+        nuevas_posiciones_acierto(list): lista con las posiciones de una fila acertada
+    """
     posiciones_libres = obtener_posiciones_sin_usar(matriz_botones,lista_posiciones)
     for fila in matriz_botones:
         posiciones_libres = asignar_posicion_libre_fila(posiciones_libres,nuevas_posiciones_acierto,fila)
     return matriz_botones
 
 def ordenar_botones_acertados(botones_acertados,lista_posiciones,aciertos_previos): #asigna las nuevas posiciones a los elementos correcto y devuelve esas posiciones tomadas en una lista
+    """
+    Se obtienen nuevas posiciones de la fila de elementos correctos ingresados
+    Args:
+        botones_acertados(list): botones seleccionados
+        lista_posiciones(list): lista de todas las posiciones de los botones 
+        aciertos_previos(int): numero de filas acertadas previamente
+    Se devuelven las nuevas posiciones para una nueva fila acertada
+    """
     nuevas_posiciones_acierto = []
     for i,boton in enumerate(botones_acertados):
         boton["Posicion"] = lista_posiciones[aciertos_previos * 4 + i]
@@ -159,6 +189,13 @@ def ordenar_botones_acertados(botones_acertados,lista_posiciones,aciertos_previo
     return nuevas_posiciones_acierto
 
 def reordenar_botones_acierto(matriz_botones,aciertos_previos,pantalla):
+    """
+    Reordena los elementos acertados a un nuevo lugar y los elementos que ocupaban ese lugar a los lugares que quedaron libres 
+    Args:
+        matriz_botones(list): matriz que contiene botones
+        aciertos_previos(int): categorias acertadas 
+        pantalla: pantalla que se utiliza
+    """
     botones_acierto = obtener_botones_seleccionados(matriz_botones)
     lista_posiciones_seleccionados = []
     for boton in botones_acierto:
@@ -170,6 +207,12 @@ def reordenar_botones_acierto(matriz_botones,aciertos_previos,pantalla):
     return matriz_botones
 
 def verificar_acierto(matriz_botones):
+    """
+    Verifica si 4 elementos seleccionados pertenecen a una misma categoria
+    Args:
+        matriz_botones(list): matriz que contiene botones
+    Retorna True si 4 elementos seleccionados de una matriz pertenecen a una misma categoria y False en caso contrario
+    """
     resultado = False
     if contar_seleccionados(matriz_botones) == 4 and len(agregar_categorias_seleccionadas(matriz_botones)) == 1:
         resultado = True
@@ -192,6 +235,12 @@ def agregar_botones_comodines(valores_juego,ventana_principal):
     return valores_juego
 
 def mostrar_comodines(valores_juego,ventana_principal):
+    """
+    Muestra los comodines por pantalla
+    Args:
+        valores_juego(dict): diccionario de datos para el funcionamiento del juego
+        ventana_principal: la pantalla que se utiliza
+    """
     for comodin in valores_juego["comodines"]:
         dibujar_boton(comodin["Boton"],ventana_principal)
 
@@ -254,18 +303,40 @@ def manejar_acierto(stats,valores_juego,ventana_principal,PANTALLA,matriz_desord
     return matriz_botones,secuencias,matriz,matriz_desordenada,filas_ordenadas
 
 def mostrar_interfaz(valores_juego,ventana_principal,matriz_botones,botones_musica):
+    """
+    Muestra todo lo necesario para la funcionalidad del juego por pantalla
+    Args:
+        valores_juego(dict): diccionario de datos para el funcionamiento del juego
+        ventana_principal: la pantalla que se utiliza
+        matriz_botones(list): matriz que contiene los botones
+        botones_musica(list): lista que contiene los botones para la opciones de sonido 
+    """
     mostrar_stats(valores_juego["stats"],ventana_principal)
     mostrar_comodines(valores_juego,ventana_principal)
     mostrar_botones(matriz_botones,ventana_principal)
     mostrar_botones_fila(botones_musica,ventana_principal)
 
 def mostrar_stat(stat,ruta_imagen,ventana_principal,posX):
+    """
+    Muestra imagenes de los stat ,con separacion entre ellas,tantas veces sea el valor del stat
+    Arg:
+        stat(int): numero de vida o repeticion
+        ruta_imagen(str): ruta de la imagen a usar 
+        ventana_principal: la pantalla que se utiliza
+        posx(int): posicion inicial en X
+    """
     posY = 10
     for _ in range(stat):
         mostrar_imagen(ruta_imagen,ventana_principal,(40,40),(posX,posY))
         posX += 40
 
 def mostrar_stats(stats,ventana_principal):
+    """
+    Muestra las estadisticas a usar por pantalla
+    Args:
+        stats(dict): diccionario de estadisticas del jugador
+        ventana_principal: la pantalla que se utiliza
+    """
     mostrar_mensaje_pantalla(f"{stats["puntaje"]} Pts",(180,30),ventana_principal,"fuentes/letra_pixelada2.ttf",20,(187, 255, 0))
     mostrar_stat(stats["vidas nivel"],"imagenes/corazon_vida.png",ventana_principal,280)
     mostrar_stat(stats["reinicios"], "imagenes/reinicio.png",ventana_principal,460)
