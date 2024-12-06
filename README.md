@@ -2,7 +2,7 @@
 # 🎮 Agrupados: El Juego de Clasificación 🎲
 
 **Agrupados** es un desafiante juego donde el objetivo es clasificar elementos en categorías correctamente. Inspirado en el juego [Pixlinks](https://poki.com/es/g/pixlinks) 🧠✨
-
+**Gameplay** https://www.youtube.com/watch?v=Lzno0XCeboM
 ## 🚀 Características
 
 - **Juego por niveles:** Supera los 5 niveles.
