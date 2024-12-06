@@ -245,7 +245,6 @@ def manejar_eventos(valores_juego,matriz_botones,botones_musica,boton_configurac
         elif evento.type == pygame.MOUSEBUTTONDOWN:
             actualizar_estado_botones(matriz_botones,evento)
             seleccionar_comodines(valores_juego,evento)
-            # checkear_accion_botones(botones_musica,evento)
             checkear_apertura_menu(evento,ventana_principal,boton_configuracion,botones_musica)
 
 def bucle_principal_juego(valores_juego,matriz_botones,secuencias,matriz,matriz_desordenada,filas_ordenadas,ventana_principal,PANTALLA,botones_musica,boton_configuracion):

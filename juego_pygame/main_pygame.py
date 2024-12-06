@@ -12,7 +12,7 @@ def main_juego():
     matriz_desordenada,secuencias,matriz = valores_juego["matriz_desordenada"], valores_juego["secuencias"], valores_juego["matriz"]
     matriz_botones = crear_matriz_botones(matriz_desordenada,ventana_principal,PANTALLA)
     botones_musica = crear_botones_sonido(ventana_principal)
-    boton_configuracion = boton_salir = crear_boton(ventana_principal,(840,10),(50,50),path_imagen="imagenes/configuracion.png")
+    boton_configuracion = crear_boton(ventana_principal,(840,10),(50,50),path_imagen="imagenes/configuracion.png")
     filas_ordenadas = 0
     #endregion
     mostrar_imagen("imagenes/fondo3.jpg",ventana_principal,PANTALLA,(0,0)) #mostrar por primera vez el fondo
