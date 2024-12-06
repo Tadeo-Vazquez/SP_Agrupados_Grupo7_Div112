@@ -63,3 +63,27 @@ def mostrar_mensaje_pantalla(texto,posicion,ventana_principal,ruta_fuente,tamañ
     texto_superficie = fuente.render(texto, False, color_letra,color_fondo)
     texto_rect = texto_superficie.get_rect(center=posicion)
     ventana_principal.blit(texto_superficie,texto_rect)
+
+def mostrar_menu(pantalla,botones_sonido):
+    boton_salir = crear_boton(pantalla,(840,10),(50,50),path_imagen="imagenes/cerrar.png")
+    menu_abierto = True
+    mostrar_imagen("imagenes/fondo3.jpg",pantalla,(900,900),(0,0))
+    while menu_abierto:
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if evento.type == pygame.MOUSEBUTTONDOWN:
+                if boton_salir["Rectangulo"].collidepoint(evento.pos):
+                    menu_abierto = False
+                checkear_accion_botones(botones_sonido,evento)
+
+        dibujar_boton(boton_salir,pantalla)
+        mostrar_botones_fila(botones_sonido,pantalla)
+        pygame.display.flip()
+    mostrar_imagen("imagenes/fondo3.jpg",pantalla,(900,900),(0,0))
+    
+def checkear_apertura_menu(evento,pantalla,boton_configuracion,botones_sonido):
+    if boton_configuracion["Rectangulo"].collidepoint(evento.pos):
+        mostrar_menu(pantalla,botones_sonido)
+

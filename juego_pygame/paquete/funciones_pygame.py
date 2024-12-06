@@ -201,11 +201,11 @@ def manejar_acierto(stats,valores_juego,ventana_principal,PANTALLA,matriz_desord
     
     return matriz_botones,secuencias,matriz,matriz_desordenada,filas_ordenadas
 
-def mostrar_interfaz(valores_juego,ventana_principal,matriz_botones,botones_musica):
+def mostrar_interfaz(valores_juego,ventana_principal,matriz_botones,boton_configuracion):
     mostrar_stats(valores_juego["stats"],ventana_principal)
     mostrar_comodines(valores_juego,ventana_principal)
     mostrar_botones(matriz_botones,ventana_principal)
-    mostrar_botones_fila(botones_musica,ventana_principal)
+    dibujar_boton(boton_configuracion,ventana_principal)
 
 def mostrar_stat(stat,ruta_imagen,ventana_principal,posX):
     posY = 10
@@ -238,30 +238,30 @@ def inicializar_ventana():
     mostrar_imagen("imagenes/fondo3.jpg",ventana_principal,PANTALLA,(0,0))
     return PANTALLA,ventana_principal
 
-def manejar_eventos(valores_juego,matriz_botones,botones_musica):
+def manejar_eventos(valores_juego,matriz_botones,botones_musica,boton_configuracion,ventana_principal):
     for evento in pygame.event.get():
         if evento.type == pygame.QUIT:
             valores_juego["flag_juego"] = False
         elif evento.type == pygame.MOUSEBUTTONDOWN:
             actualizar_estado_botones(matriz_botones,evento)
             seleccionar_comodines(valores_juego,evento)
-            checkear_accion_botones(botones_musica,evento)
+            # checkear_accion_botones(botones_musica,evento)
+            checkear_apertura_menu(evento,ventana_principal,boton_configuracion,botones_musica)
 
-def bucle_principal_juego(valores_juego,matriz_botones,secuencias,matriz,matriz_desordenada,filas_ordenadas,ventana_principal,PANTALLA,botones_musica):
+def bucle_principal_juego(valores_juego,matriz_botones,secuencias,matriz,matriz_desordenada,filas_ordenadas,ventana_principal,PANTALLA,botones_musica,boton_configuracion):
     while valores_juego["flag_juego"]:
         dibujar_rectangulo(100,0,700,60,(108, 34, 255),ventana_principal)
-        manejar_eventos(valores_juego,matriz_botones,botones_musica)
-        # verificar_seleccion_correcta_y_actualizar
+        manejar_eventos(valores_juego,matriz_botones,botones_musica,boton_configuracion,ventana_principal)
         acierto = verificar_acierto(matriz_botones)
         matriz_botones,secuencias,matriz,matriz_desordenada,filas_ordenadas = manejar_acierto_o_error(acierto,valores_juego["stats"],valores_juego,ventana_principal,PANTALLA,matriz_desordenada,secuencias,matriz,matriz_botones,filas_ordenadas)
-        mostrar_interfaz(valores_juego,ventana_principal,matriz_botones,botones_musica)
+        mostrar_interfaz(valores_juego,ventana_principal,matriz_botones,boton_configuracion)
         verificar_uso_comodin(ventana_principal,valores_juego,matriz_botones)
         pygame.display.update()
 
 def crear_botones_sonido(pantalla):
-    boton_subir_volumen = crear_boton(pantalla,(740,860),(40,40),path_imagen="imagenes/subir_volumen.png",accion=subir_volumen)
-    boton_bajar_volumen = crear_boton(pantalla,(780,860),(40,40),path_imagen="imagenes/bajar_volumen.png",accion=bajar_volumen)
-    boton_mutear = crear_boton(pantalla,(820,860),(40,40),path_imagen="imagenes/mutear_volumen.png",accion=mutear_volumen)
-    boton_desmutear = crear_boton(pantalla,(860,860),(40,40),path_imagen="imagenes/desmutear_volumen.png",accion=desmutear_volumen)
+    boton_subir_volumen = crear_boton(pantalla,(220,380),(100,100),path_imagen="imagenes/subir_volumen.png",accion=subir_volumen)
+    boton_bajar_volumen = crear_boton(pantalla,(350,380),(100,100),path_imagen="imagenes/bajar_volumen.png",accion=bajar_volumen)
+    boton_mutear = crear_boton(pantalla,(480,380),(100,100),path_imagen="imagenes/mutear_volumen.png",accion=mutear_volumen)
+    boton_desmutear = crear_boton(pantalla,(610,380),(100,100),path_imagen="imagenes/desmutear_volumen.png",accion=desmutear_volumen)
 
     return [boton_subir_volumen,boton_bajar_volumen,boton_mutear,boton_desmutear]
